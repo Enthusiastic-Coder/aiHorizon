@@ -15,7 +15,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QCoreApplication>
-
+#include "openglcontextTest.h"
 
 camera cam(vector3d(-3,10,25));
 
@@ -41,12 +41,18 @@ void OpenGLWindow::initializeGL()
     _shaderProgram= new shader("shaders/vertex.vert", "shaders/fragment.frag");
     _scene = new AIMeshLoader("aiHorizon/output.obj");
 
+    const char* version = (const char*)glGetString(GL_VERSION);
+
+    doTest(this);
+
     glEnable(GL_DEPTH_TEST);
     glClearColor(0,0,1,1);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
     _timer.start(100);
     _accelerometer.setActive(true);
     _orientation.setActive(true);
+
+
 }
 
 void OpenGLWindow::paintGL()
@@ -164,6 +170,8 @@ void OpenGLWindow::paintGL()
     _shaderProgram->release();
 
     QPainter p(this);
+
+    p.fillRect(0, 0, 100, 100, Qt::yellow);
 
     QFont font("Verdana", 14);
     QFontMetrics fm(font);
