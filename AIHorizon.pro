@@ -13,20 +13,22 @@ TEMPLATE = app
 
 CONFIG += c++11
 
-PROJECT = $(SDK_PROJECT)
+INCLUDEPATH += sdk/include
+INCLUDEPATH += glm
 
-
-include($$PROJECT/qMake/qMakeDestination.pri)
-include($$PROJECT/qMake/qImportAssimp.pri)
-include($$PROJECT/qMake/qImportGlee.pri)
-include($$PROJECT/qMake/qImportGlm.pri)
-include(AIHorizon.pri)
-
-INCLUDEPATH += $$PROJECT/include
+include(sdk/qMake/qMakeDestination.pri)
+include(assimp/assimp.pri)
 
 win32 {
-    LIBS +=-L"C:/Program Files (x86)/OpenAL 1.1 SDK/libs/Win32"
-    LIBS += -l"opengl32" -l"user32" -l"gdi32"
+    SOURCES += sdk/include/GLee.c
+    HEADERS += sdk/include/GLee.h
+}
+
+include(sdk/qMake/qImportGlm.pri)
+include(AIHorizon.pri)
+
+win32 {
+   LIBS += -l"opengl32" -l"user32" -l"gdi32"
 }
 
 

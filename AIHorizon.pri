@@ -5,8 +5,8 @@ SOURCES += main.cpp \
     camera.cpp \
     vector3d.cpp \
     aimeshloader.cpp \
-    $$PROJECT/include/shader.cpp \
-    $$PROJECT/include/matrices.cpp
+    sdk/include/shader.cpp \
+    sdk/include/matrices.cpp
 
 HEADERS += \
     openglwindow.h \
@@ -16,6 +16,6 @@ HEADERS += \
     camera.h \
     vector3d.h \
     aimeshloader.h \
-    $$PROJECT/include/shader.h \
-    $$PROJECT/include/matrices.h
+    sdk/include/shader.h \
+    sdk/include/matrices.h
 
