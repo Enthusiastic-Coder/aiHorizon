@@ -28,7 +28,7 @@ include(sdk/qMake/qImportGlm.pri)
 include(AIHorizon.pri)
 
 win32 {
-   LIBS += -l"opengl32" -l"user32" -l"gdi32"
+   LIBS += -l"opengl32"
 }
 
 
