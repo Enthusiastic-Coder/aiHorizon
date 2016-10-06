@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
 #ifdef WIN32
     SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 #endif
+    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 
     QGuiApplication a(argc, argv);
 

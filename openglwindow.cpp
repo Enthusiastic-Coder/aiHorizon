@@ -171,8 +171,6 @@ void OpenGLWindow::paintGL()
 
     QPainter p(this);
 
-    p.fillRect(0, 0, 100, 100, Qt::yellow);
-
     QFont font("Verdana", 14);
     QFontMetrics fm(font);
     p.setFont(font);
