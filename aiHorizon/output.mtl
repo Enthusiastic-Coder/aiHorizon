@@ -1,0 +1,128 @@
+#
+# Wavefront material file: C:\Project\Models\TurboSquid\AI\prep\output.mtl
+#
+# Converted by the PolyTrans geometry converter from Okino Computer Graphics, Inc.
+# Date/time of export: 05/12/2015 14:29:30
+#
+# Bounding box of geometry = (-4.064,-4.064,-0.718286) to (4.064,4.064,1.311).
+
+newmtl default
+	Ns 32
+	d 1
+	illum 2
+	Kd 0.4 0.4 0.4
+	Ks 0.7 0.7 0.7
+	Ka 0.3 0.3 0.3
+
+newmtl Black
+	Ns 25
+	d 1
+	illum 2
+	Kd 0.207843 0.207843 0.207843
+	Ks 0 0 0
+	Ka 0.0623529 0.0623529 0.0623529
+
+newmtl Blue
+	Ns 128
+	d 1
+	illum 2
+	Kd 0.233333 0.396667 0.573333
+	Ks 0.0686275 0.116667 0.168627
+	Ka 0.0823529 0.14 0.202353
+
+newmtl Brown
+	Ns 128
+	d 1
+	illum 2
+	Kd 0.57 0.36 0.0466667
+	Ks 0.167647 0.105882 0.0137255
+	Ka 0.201176 0.127059 0.0164706
+
+newmtl Face_Ring
+	Ns 6
+	d 1
+	illum 2
+	Kd 0.15098 0.15098 0.15098
+	Ks 0.114745 0.114745 0.114745
+	Ka 0.0905882 0.0905882 0.0905882
+
+newmtl Glass
+	Ns 256
+	d 0
+	illum 2
+	Kd 0.05 0.05 0.05
+	Ks 0.5 0.5 0.5
+	Ka 0.3 0.3 0.3
+
+newmtl Housing
+	Ns 16
+	d 1
+	illum 2
+	Kd 0.0392157 0.0392157 0.0392157
+	Ks 0.25 0.25 0.25
+	Ka 0.0392157 0.0392157 0.0392157
+
+newmtl Housing_Sides
+	Ns 6
+	d 1
+	illum 2
+	Kd 0.361765 0.361765 0.361765
+	Ks 0.402941 0.402941 0.402941
+	Ka 0.176471 0.176471 0.176471
+
+newmtl Housing_White
+	Ns 25
+	d 1
+	illum 2
+	Kd 0.784314 0.784314 0.784314
+	Ks 0 0 0
+	Ka 0.235294 0.235294 0.235294
+
+newmtl LED
+	Ns 32
+	d 1
+	illum 2
+	Kd 0.496078 0.372549 0.141176
+	Ks 0.114098 0.0856863 0.0324706
+	Ka 0.297647 0.223529 0.0847059
+
+newmtl Orange
+	Ns 128
+	d 1
+	illum 2
+	Kd 1 0.501961 0
+	Ks 0.25 0.12549 0
+	Ka 0.3 0.150588 0
+
+newmtl Red
+	Ns 128
+	d 1
+	illum 2
+	Kd 0.933333 0.0823529 0.0823529
+	Ks 0.233333 0.0205882 0.0205882
+	Ka 0.28 0.0247059 0.0247059
+
+newmtl Screws
+	Ns 32
+	d 1
+	illum 2
+	Kd 0.187059 0.187059 0.187059
+	Ks 0.166275 0.166275 0.166275
+	Ka 0.0623529 0.0623529 0.0623529
+
+newmtl Screws_Flat
+	Ns 32
+	d 1
+	illum 2
+	Kd 0.187059 0.187059 0.187059
+	Ks 0.166275 0.166275 0.166275
+	Ka 0.0623529 0.0623529 0.0623529
+
+newmtl White
+	Ns 25
+	d 1
+	illum 2
+	Kd 0.784314 0.784314 0.784314
+	Ks 0 0 0
+	Ka 0.235294 0.235294 0.235294
+
