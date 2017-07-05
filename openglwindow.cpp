@@ -16,6 +16,7 @@
 #include <QPainter>
 #include <QCoreApplication>
 #include "openglcontextTest.h"
+#include <QDir>
 
 camera cam(vector3d(-3,10,25));
 
@@ -37,7 +38,7 @@ OpenGLWindow::~OpenGLWindow()
 
 void OpenGLWindow::initializeGL()
 {
-    copyAssets(false);
+    copyAssets(true);
     _shaderProgram= new shader("shaders/vertex.vert", "shaders/fragment.frag");
     _scene = new AIMeshLoader("aiHorizon/output.obj");
 

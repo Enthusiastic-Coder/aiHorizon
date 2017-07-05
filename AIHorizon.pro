@@ -24,7 +24,6 @@ win32 {
     HEADERS += sdk/include/GLee.h
 }
 
-include(sdk/qMake/qImportGlm.pri)
 include(AIHorizon.pri)
 
 win32 {
@@ -51,7 +50,14 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
     shaders/fragment.frag \
-    shaders/vertex.vert
+    shaders/vertex.vert \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 

@@ -9,9 +9,9 @@ varying mediump vec2 outUV;
 varying mediump vec3 outLightPos;
 varying mediump vec3 position;
 
-const mediump vec3 ambientColor=vec3(0.05,0.05,0.05);
+mediump vec3 ambientColor=vec3(0.05,0.05,0.05);
 mediump vec3 diffuseColor=vec3(0.7,0.7,0.7);
-const mediump vec3 specularColor=vec3(1.0,1.0,1.0);
+mediump vec3 specularColor=vec3(1.0,1.0,1.0);
 
 void main()
 {
