@@ -1,8 +1,8 @@
 #include "mesh.h"
-#include <include_gl.h>
 
 mesh::mesh(std::string name, std::vector<vertexData>* vd,std::vector<unsigned short>* id,std::vector<textureData>* td)
 {
+    QOpenGLFunctions::initializeOpenGLFunctions();
     _name = name;
     _data=*vd;
     _indices=*id;

@@ -19,16 +19,16 @@ INCLUDEPATH += glm
 include(sdk/qMake/qMakeDestination.pri)
 include(assimp/assimp.pri)
 
-win32 {
-    SOURCES += sdk/include/GLee.c
-    HEADERS += sdk/include/GLee.h
-}
+#win32 {
+#    SOURCES += sdk/include/GLee.c
+#    HEADERS += sdk/include/GLee.h
+#}
 
 include(AIHorizon.pri)
 
-win32 {
-   LIBS += -l"opengl32"
-}
+#win32 {
+#   LIBS += -l"opengl32"
+#}
 
 
 aiHorizon.files += aiHorizon/*

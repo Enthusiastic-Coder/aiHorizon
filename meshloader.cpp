@@ -6,10 +6,10 @@
 #include <QImage>
 #include <QFileInfo>
 #include <QDebug>
-#include <include_gl.h>
 
 meshLoader::meshLoader(std::string filename)
 {
+    QOpenGLFunctions::initializeOpenGLFunctions();
     std::string::size_type size = filename.find_last_of("/\\");
 
     std::string baseFolder;

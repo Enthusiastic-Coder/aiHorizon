@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <meshData.h>
+#include <QOpenGLFunctions>
 
-
-class mesh
+class mesh : private QOpenGLFunctions
 {
 public:
     mesh(std::string name, std::vector<vertexData>* vd,std::vector<unsigned short>* id,std::vector<textureData>* td=NULL);

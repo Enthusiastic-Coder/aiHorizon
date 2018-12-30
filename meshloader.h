@@ -9,8 +9,9 @@
 #include <assimp/postprocess.h>
 #include "mesh.h"
 
+#include <QOpenGLFunctions>
 
-class meshLoader
+class meshLoader : private QOpenGLFunctions
 {
 public:
     explicit meshLoader(std::string filename);

@@ -9,7 +9,9 @@ int main(int argc, char *argv[])
 #ifdef WIN32
     SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 #endif
-    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+    QGuiApplication::setAttribute(Qt::AA_UseOpenGLES);
+//    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication a(argc, argv);
 
@@ -17,6 +19,7 @@ int main(int argc, char *argv[])
     QSurfaceFormat fmt;
     fmt.setDepthBufferSize(24);
     fmt.setStencilBufferSize(8);
+    fmt.setAlphaBufferSize(8);
     //fmt.setMajorVersion(2);
     //fmt.setMinorVersion(0);
 //   fmt.setProfile(QSurfaceFormat::CompatibilityProfile);

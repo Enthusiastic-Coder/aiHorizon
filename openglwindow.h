@@ -17,8 +17,9 @@
 class shader;
 class meshLoader;
 
+#include <QOpenGLFunctions>
 
-class OpenGLWindow : public QOpenGLWindow
+class OpenGLWindow : public QOpenGLWindow, private QOpenGLFunctions
 {
     Q_OBJECT
 public:

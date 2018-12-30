@@ -1,4 +1,3 @@
-#include <include_gl.h>
 #include "openglwindow.h"
 
 #include <camera.h>
@@ -38,6 +37,7 @@ OpenGLWindow::~OpenGLWindow()
 
 void OpenGLWindow::initializeGL()
 {
+    QOpenGLFunctions::initializeOpenGLFunctions();
     copyAssets(true);
     _shaderProgram= new shader("shaders/vertex.vert", "shaders/fragment.frag");
     _scene = new AIMeshLoader("aiHorizon/output.obj");
@@ -67,6 +67,12 @@ void OpenGLWindow::paintGL()
     glEnable(GL_DEPTH_TEST);
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    QPainter p;
+//    p.begin(this);
+//    p.setPen(Qt::white);
+//    p.drawText(100,100,"HELLO");
+//    p.end();
 
     _shaderProgram->use();
 
@@ -170,8 +176,8 @@ void OpenGLWindow::paintGL()
 
     _shaderProgram->release();
 
-    QPainter p(this);
-
+//    QPainter p(this);
+p.begin(this);
     QFont font("Verdana", 14);
     QFontMetrics fm(font);
     p.setFont(font);
@@ -184,7 +190,7 @@ void OpenGLWindow::paintGL()
     p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
     p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
     p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
-
+p.end();
 }
 
 void OpenGLWindow::resizeGL(int w, int h)
