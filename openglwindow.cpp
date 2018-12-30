@@ -38,7 +38,7 @@ OpenGLWindow::~OpenGLWindow()
 void OpenGLWindow::initializeGL()
 {
     QOpenGLFunctions::initializeOpenGLFunctions();
-    copyAssets(true);
+//    copyAssets(true);
     _shaderProgram= new shader("shaders/vertex.vert", "shaders/fragment.frag");
     _scene = new AIMeshLoader("aiHorizon/output.obj");
 
@@ -70,8 +70,10 @@ void OpenGLWindow::paintGL()
 
     QPainter p;
 //    p.begin(this);
+//    p.save();
 //    p.setPen(Qt::white);
 //    p.drawText(100,100,"HELLO");
+//    p.restore();
 //    p.end();
 
     _shaderProgram->use();
