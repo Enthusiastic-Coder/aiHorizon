@@ -4,34 +4,36 @@
 #include <QSize>
 #include <QScreen>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
+#include <QDir>
+
 int main(int argc, char *argv[])
 {
-#ifdef WIN32
+#ifdef Q_OS_WIN
     SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 #endif
-    QGuiApplication::setAttribute(Qt::AA_UseOpenGLES);
 //    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+//    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+    QSurfaceFormat fmt;
+    fmt.setDepthBufferSize(24);
+    fmt.setAlphaBufferSize(8);
+    fmt.setStencilBufferSize(8);
+    QSurfaceFormat::setDefaultFormat(fmt);
 
     QGuiApplication a(argc, argv);
 
     OpenGLWindow window;
-    QSurfaceFormat fmt;
-    fmt.setDepthBufferSize(24);
-    fmt.setStencilBufferSize(8);
-    fmt.setAlphaBufferSize(8);
-    //fmt.setMajorVersion(2);
-    //fmt.setMinorVersion(0);
-//   fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
-//    fmt.setRenderableType(QSurfaceFormat::OpenGLES);
-    window.setFormat(fmt);
-
 #ifndef ANDROID
     QSize size = QGuiApplication::screens()[0]->availableSize();
     QSize newSize(size.width()*0.8, size.height()*0.8);
     window.resize(newSize);
 #endif
     window.show();
+
+    qDebug() << "Current Path: " << QDir::currentPath();
 
     return a.exec();
 }

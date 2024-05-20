@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sensors
+QT       += core gui sensors opengl
 
 TARGET = AIHorizon
 CONFIG   += console

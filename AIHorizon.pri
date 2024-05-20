@@ -5,8 +5,8 @@ SOURCES += main.cpp \
     camera.cpp \
     vector3d.cpp \
     aimeshloader.cpp \
-    sdk/include/shader.cpp \
-    sdk/include/matrices.cpp \
+    shader.cpp \
+    matrices.cpp \
     $$PWD/openglcontextTest.cpp
 
 HEADERS += \
@@ -17,7 +17,7 @@ HEADERS += \
     camera.h \
     vector3d.h \
     aimeshloader.h \
-    sdk/include/shader.h \
-    sdk/include/matrices.h \
+    shader.h \
+    matrices.h \
     $$PWD/openglcontextTest.h
 
