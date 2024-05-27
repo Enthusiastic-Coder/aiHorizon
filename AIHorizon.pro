@@ -41,23 +41,14 @@ INSTALLS += shaders
 
 RESOURCES +=
 
-DISTFILES += \
-    android/AndroidManifest.xml \
-    android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradlew \
-    android/res/values/libs.xml \
-    android/build.gradle \
-    android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat \
-    shaders/fragment.frag \
-    shaders/vertex.vert \
-    android/AndroidManifest.xml \
-    android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradlew \
-    android/res/values/libs.xml \
-    android/build.gradle \
-    android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
+DISTFILES += $$files("shaders/*", true) $$files("android/*", true)
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
+
+# packInfo.files += asset_pack_config.json
+# INSTALLS += $$DEPLOY_DIR/packInfo
+
+# DISTFILES += \
+#     main/build.gradle \
+#     patch/build.gradle
