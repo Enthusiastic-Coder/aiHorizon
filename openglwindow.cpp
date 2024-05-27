@@ -26,8 +26,7 @@ QString getAssetPath(const QString &packName) {
 
     QJniObject context = QNativeInterface::QAndroidApplication::context();
     if (!context.isValid()) {
-        qWarning() << "Failed to get Android context";
-        return QString();
+        return "Failed to get Android context";
     }
 
     QJniObject assetPackManager = QJniObject::callStaticObjectMethod(
@@ -38,8 +37,7 @@ QString getAssetPath(const QString &packName) {
         );
 
     if (!assetPackManager.isValid()) {
-        qWarning() << "Failed to get AssetPackManager instance";
-        return QString();
+        return "Failed to get AssetPackManager instance";
     }
 
     QJniObject packNameJni = QJniObject::fromString(packName);
@@ -50,8 +48,7 @@ QString getAssetPath(const QString &packName) {
         );
 
     if (!location.isValid()) {
-        qWarning() << "Failed to get asset pack location";
-        return QString();
+        return "Failed to get asset pack location";
     }
 
     QJniObject path = location.callObjectMethod("assetsPath", "()Ljava/lang/String;");
