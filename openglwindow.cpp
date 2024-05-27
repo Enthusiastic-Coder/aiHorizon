@@ -17,6 +17,67 @@
 #include "openglcontextTest.h"
 #include <QDir>
 
+#ifdef Q_OS_ANDROID
+
+#include <QJniObject>
+#include <QJniEnvironment>
+
+QString getAssetPath(const QString &packName) {
+
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    if (!context.isValid()) {
+        qWarning() << "Failed to get Android context";
+        return QString();
+    }
+
+    QJniObject assetPackManager = QJniObject::callStaticObjectMethod(
+        "com/google/android/play/core/assetpacks/AssetPackManagerFactory",
+        "getInstance",
+        "(Landroid/content/Context;)Lcom/google/android/play/core/assetpacks/AssetPackManager;",
+        context.object()
+        );
+
+    if (!assetPackManager.isValid()) {
+        qWarning() << "Failed to get AssetPackManager instance";
+        return QString();
+    }
+
+    QJniObject packNameJni = QJniObject::fromString(packName);
+    QJniObject location = assetPackManager.callObjectMethod(
+        "getPackLocation",
+        "(Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;",
+        packNameJni.object<jstring>()
+        );
+
+    if (!location.isValid()) {
+        qWarning() << "Failed to get asset pack location";
+        return QString();
+    }
+
+    QJniObject path = location.callObjectMethod("assetsPath", "()Ljava/lang/String;");
+    return path.toString();
+}
+
+#endif
+
+QString checkAndAccessObbFiles() {
+
+#ifdef Q_OS_ANDROID
+    QString mainPackPath = getAssetPath("main");
+
+    if (mainPackPath.isEmpty()) {
+        return "Assets from mainpack not found!";
+    } else {
+        return "Assets from mainpack found at:" + mainPackPath;
+        // Access files in mainPackPath
+    }
+#else
+    return "Windows";
+#endif
+}
+
+
+
 camera cam(vector3d(-3,10,25));
 
 
@@ -24,6 +85,7 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
+    _OBBPath = checkAndAccessObbFiles();
 }
 
 OpenGLWindow::~OpenGLWindow()
@@ -192,6 +254,11 @@ p.begin(this);
     p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
     p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
     p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
+    p.drawText(0, 6* fm.height(), "obb Path : " + _OBBPath);
+
+    const QString pathExists = QFile::exists(_OBBPath)  ? "Found" : "Not Found";
+    p.drawText(0, 7* fm.height(), "obb Path exists: " + pathExists );
+
 p.end();
 }
 
