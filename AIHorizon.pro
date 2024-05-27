@@ -45,10 +45,3 @@ DISTFILES += $$files("shaders/*", true) $$files("android/*", true)
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-
-# packInfo.files += asset_pack_config.json
-# INSTALLS += $$DEPLOY_DIR/packInfo
-
-# DISTFILES += \
-#     main/build.gradle \
-#     patch/build.gradle
