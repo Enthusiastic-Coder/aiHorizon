@@ -22,6 +22,7 @@
 #include <QJniObject>
 #include <QJniEnvironment>
 
+/*
 QString getAssetPath(const QString &packName) {
 
     QJniObject context = QNativeInterface::QAndroidApplication::context();
@@ -53,11 +54,10 @@ QString getAssetPath(const QString &packName) {
 
     QJniObject path = location.callObjectMethod("assetsPath", "()Ljava/lang/String;");
     return path.toString();
-}
+}*/
 
-
-void requestAssetPack(const QString &packName) {
-    QJniObject context = QNativeInterface::QAndroidApplication::context();
+QString getAssetPackPath(const QString &packName, const QString &assetName) {
+     QJniObject context = QNativeInterface::QAndroidApplication::context();
     QJniObject assetPackHelper = QJniObject(
         "com/enthusiasticcoder/aihorizon/AssetPackHelper",
         "(Landroid/content/Context;)V",
@@ -66,11 +66,23 @@ void requestAssetPack(const QString &packName) {
 
     if (assetPackHelper.isValid()) {
         QJniObject packNameJni = QJniObject::fromString(packName);
-        assetPackHelper.callMethod<void>("requestAssetPack", "(Ljava/lang/String;)V", packNameJni.object<jstring>());
-        qDebug() << "Requested asset pack:" << packName;
+        QJniObject assetNameJni = QJniObject::fromString(assetName);
+        QJniObject assetPath = assetPackHelper.callObjectMethod(
+            "getAssetPackPath",
+            "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
+            packNameJni.object<jstring>(),
+            assetNameJni.object<jstring>()
+            );
+
+        if (assetPath.isValid()) {
+            return assetPath.toString();
+        } else {
+            return "Failed to get asset path for " + packName + assetName;
+        }
     } else {
-        qDebug() << "Failed to create AssetPackHelper instance";
+        return "Failed to create AssetPackHelper instance";
     }
+    return "";
 }
 
 #endif
@@ -78,7 +90,7 @@ void requestAssetPack(const QString &packName) {
 QString checkAndAccessObbFiles() {
 
 #ifdef Q_OS_ANDROID
-    QString mainPackPath = getAssetPath("main");
+    QString mainPackPath = getAssetPackPath("main","main.obb");
 
     if (mainPackPath.isEmpty()) {
         return "Assets from mainpack not found!";

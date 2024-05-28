@@ -3,6 +3,10 @@ package com.enthusiasticcoder.aihorizon;
 import android.content.Context;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackStates;
+
+import java.util.List;
 
 public class AssetPackHelper {
     private AssetPackManager assetPackManager;
@@ -11,7 +15,12 @@ public class AssetPackHelper {
         assetPackManager = AssetPackManagerFactory.getInstance(context);
     }
 
-    public void requestAssetPack(String packName) {
-        assetPackManager.fetch(java.util.Arrays.asList(packName));
+
+    public String getAssetPackPath(String packName, String assetName) {
+        AssetLocation assetLocation = assetPackManager.getAssetLocation (packName,assetName);
+        if (assetLocation != null) {
+            return assetLocation.path();
+        }
+        return "";
     }
 }
