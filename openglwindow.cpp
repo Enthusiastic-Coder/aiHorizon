@@ -55,6 +55,24 @@ QString getAssetPath(const QString &packName) {
     return path.toString();
 }
 
+
+void requestAssetPack(const QString &packName) {
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    QJniObject assetPackHelper = QJniObject(
+        "com/enthusiasticcoder/aihorizon/AssetPackHelper",
+        "(Landroid/content/Context;)V",
+        context.object()
+        );
+
+    if (assetPackHelper.isValid()) {
+        QJniObject packNameJni = QJniObject::fromString(packName);
+        assetPackHelper.callMethod<void>("requestAssetPack", "(Ljava/lang/String;)V", packNameJni.object<jstring>());
+        qDebug() << "Requested asset pack:" << packName;
+    } else {
+        qDebug() << "Failed to create AssetPackHelper instance";
+    }
+}
+
 #endif
 
 QString checkAndAccessObbFiles() {
@@ -65,7 +83,7 @@ QString checkAndAccessObbFiles() {
     if (mainPackPath.isEmpty()) {
         return "Assets from mainpack not found!";
     } else {
-        return "Assets from mainpack found at:" + mainPackPath;
+        return mainPackPath;
         // Access files in mainPackPath
     }
 #else
