@@ -116,7 +116,7 @@ OpenGLWindow::OpenGLWindow()
     _patchOBBPath = checkAndAccessObbFiles("patch","patch.obb");
     QString messageFilename = checkAndAccessObbFiles("patch","message.txt");
     QFile file(messageFilename);
-    if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+    if(file.open(QIODevice::ReadOnly))
     {
         _messageText = file.readAll();
     }
