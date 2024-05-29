@@ -114,6 +114,12 @@ OpenGLWindow::OpenGLWindow()
     _pitchHistory.resize(_bankHistory.size());
     _mainOBBPath = checkAndAccessObbFiles("main","main.obb");
     _patchOBBPath = checkAndAccessObbFiles("patch","patch.obb");
+    QString messageFilename = checkAndAccessObbFiles("patch","message.txt");
+    QFile file(messageFilename);
+    if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+    {
+        _messageText = file.readAll();
+    }
 }
 
 OpenGLWindow::~OpenGLWindow()
@@ -284,16 +290,20 @@ p.begin(this);
     p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
 
     {
-        p.drawText(0, 6* fm.height(), "main Path : " + _mainOBBPath.right(9));
+        p.drawText(0, 6* fm.height(), "main Path : " + _mainOBBPath.right(40));
         const QString pathExists = QFile::exists(_mainOBBPath)  ? "Found" : "Not Found";
         p.drawText(0, 7* fm.height(), "exists: " + pathExists );
     }
 
     {
-        p.drawText(0, 8* fm.height(), "patch Path : " + _patchOBBPath.right(9));
+        p.drawText(0, 8* fm.height(), "patch Path : " + _patchOBBPath.right(40));
 
         const QString pathExists = QFile::exists(_patchOBBPath)  ? "Found" : "Not Found";
         p.drawText(0, 9* fm.height(), "exists: " + pathExists );
+    }
+
+    {
+        p.drawText(0, 10* fm.height(), "PathFile : " + _messageText);
     }
 
 p.end();
