@@ -6,8 +6,6 @@ import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetLocation;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 
-import java.util.List;
-
 public class AssetPackHelper {
     private AssetPackManager assetPackManager;
 

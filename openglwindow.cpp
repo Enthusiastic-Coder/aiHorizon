@@ -87,10 +87,10 @@ QString getAssetPackPath(const QString &packName, const QString &assetName) {
 
 #endif
 
-QString checkAndAccessObbFiles() {
+QString checkAndAccessObbFiles(const QString &packName, const QString &assetName) {
 
 #ifdef Q_OS_ANDROID
-    QString mainPackPath = getAssetPackPath("main","main.obb");
+    QString mainPackPath = getAssetPackPath(packName, assetName);
 
     if (mainPackPath.isEmpty()) {
         return "Assets from mainpack not found!";
@@ -112,7 +112,8 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
-    _OBBPath = checkAndAccessObbFiles();
+    _mainOBBPath = checkAndAccessObbFiles("main","main.obb");
+    _patchOBBPath = checkAndAccessObbFiles("patch","patch.obb");
 }
 
 OpenGLWindow::~OpenGLWindow()
@@ -281,10 +282,19 @@ p.begin(this);
     p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
     p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
     p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
-    p.drawText(0, 6* fm.height(), "obb Path : " + _OBBPath);
 
-    const QString pathExists = QFile::exists(_OBBPath)  ? "Found" : "Not Found";
-    p.drawText(0, 7* fm.height(), "obb Path exists: " + pathExists );
+    {
+        p.drawText(0, 6* fm.height(), "main Path : " + _mainOBBPath.right(9));
+        const QString pathExists = QFile::exists(_mainOBBPath)  ? "Found" : "Not Found";
+        p.drawText(0, 7* fm.height(), "exists: " + pathExists );
+    }
+
+    {
+        p.drawText(0, 8* fm.height(), "patch Path : " + _patchOBBPath.right(9));
+
+        const QString pathExists = QFile::exists(_patchOBBPath)  ? "Found" : "Not Found";
+        p.drawText(0, 9* fm.height(), "exists: " + pathExists );
+    }
 
 p.end();
 }
