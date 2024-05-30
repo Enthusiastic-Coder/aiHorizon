@@ -125,7 +125,7 @@ OpenGLWindow::OpenGLWindow()
     {
         AssetPackLocation loc = getAssetPackLocation("patch");
         _messageList << QString("Loc:%1").arg(loc.path.right(20));
-        _messageList << QString("Path:%1").arg(loc.assetPath);
+        _messageList << QString("Path:%1").arg(loc.assetPath.right(20));
         _messageList << QString("Storage:%1").arg(loc.storage);
     }
 }
