@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 import com.google.android.play.core.assetpacks.AssetLocation;
+import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackStates;
 
 import java.io.IOException;
@@ -20,12 +21,8 @@ public class AssetPackHelper {
         assetPackManager = AssetPackManagerFactory.getInstance(context);
     }
 
-    public String getAssetPackPath(String packName, String assetName) {
-        AssetLocation assetLocation = assetPackManager.getAssetLocation (packName,assetName);
-        if (assetLocation != null) {
-            return assetLocation.path();
-        }
-        return "";
+    public AssetPackLocation getPackLocation(String packName) {
+        return assetPackManager.getPackLocation(packName);
     }
 
     public AssetLocation getAssetLocation(String packName, String fileName) {

@@ -24,40 +24,44 @@
 #include <QJniEnvironment>
 
 
-struct AssetLocation {
+struct AssetPackLocation {
+    QString assetPath;
+    int storage;
     QString path;
-    long offset;
-    long size;
 };
 
-QString getAssetPackPath(const QString &packName, const QString &assetName) {
-     QJniObject context = QNativeInterface::QAndroidApplication::context();
-    QJniObject assetPackHelper = QJniObject(
-        "com/enthusiasticcoder/aihorizon/AssetPackHelper",
-        "(Landroid/content/Context;)V",
-        context.object()
-        );
 
-    if (assetPackHelper.isValid()) {
-        QJniObject packNameJni = QJniObject::fromString(packName);
-        QJniObject assetNameJni = QJniObject::fromString(assetName);
-        QJniObject assetPath = assetPackHelper.callObjectMethod(
-            "getAssetPackPath",
-            "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
-            packNameJni.object<jstring>(),
-            assetNameJni.object<jstring>()
-            );
+struct AssetLocation {
+    QString path;
+    long offset =0l;
+    long size =0l;
+};
 
-        if (assetPath.isValid()) {
-            return assetPath.toString();
-        } else {
-            return "Failed to get asset path for " + packName + assetName;
-        }
+AssetPackLocation getAssetPackLocation(const QString &assetPackName)
+{
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper",
+                           "(Landroid/content/Context;)V",
+                           context.object<jobject>());
+
+    QJniObject jAssetPackName = QJniObject::fromString(assetPackName);
+
+    QJniObject assetLocation = assetHelper.callObjectMethod("getPackLocation",
+                    "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;",
+                                                            jAssetPackName.object<jstring>());
+
+    AssetPackLocation location;
+    if (assetLocation.isValid()) {
+        location.path = assetLocation.callObjectMethod("assetsPath", "()Ljava/lang/String;").toString();
+        location.assetPath = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
+        location.storage = assetLocation.callMethod<jint>("packStorageMethod", "()I");
     } else {
-        return "Failed to create AssetPackHelper instance";
+        qDebug() << "Failed to getAssetPackLocation location for" << assetPackName;
     }
-    return "";
+
+    return location;
 }
+
 
 AssetLocation getAssetLocation(const QString &assetPackName, const QString &fileName) {
     QJniObject context = QNativeInterface::QAndroidApplication::context();
@@ -80,41 +84,12 @@ AssetLocation getAssetLocation(const QString &assetPackName, const QString &file
     return location;
 }
 
-QByteArray readAssetFromJava(const QString &assetPackName, const QString &fileName) {
-
-    QJniObject context = QNativeInterface::QAndroidApplication::context();
-    QJniObject javaAssetPackName = QJniObject::fromString(assetPackName);
-    QJniObject javaFileName = QJniObject::fromString(fileName);
-    QJniObject byteArray = QJniObject::callStaticObjectMethod(
-        "com/enthusiasticcoder/aihorizon/AssetReader",
-        "readAsset",
-        "(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)[B",
-        context.object(),
-        javaAssetPackName.object<jstring>(),
-        javaFileName.object<jstring>()
-        );
-
-    if (byteArray.isValid()) {
-        QJniEnvironment env;
-        jbyteArray javaBytes = byteArray.object<jbyteArray>();
-        jsize length = env->GetArrayLength(javaBytes);
-        jbyte *bytes = env->GetByteArrayElements(javaBytes, nullptr);
-        QByteArray result(reinterpret_cast<const char*>(bytes), length);
-        env->ReleaseByteArrayElements(javaBytes, bytes, JNI_ABORT);
-        return result;
-    } else {
-        qDebug() << "Failed to read asset" << assetPackName << fileName;
-        return QByteArray{"Null data"};
-    }
-}
-
-
 #endif
 
 QString checkAndAccessObbFiles(const QString &packName, const QString &assetName) {
 
 #ifdef Q_OS_ANDROID
-    QString mainPackPath = getAssetPackPath(packName, assetName);
+    QString mainPackPath = getAssetLocation(packName, assetName).path;
 
     if (mainPackPath.isEmpty()) {
         return "Assets from mainpack not found!";
@@ -136,21 +111,21 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
-    _mainOBBPath = checkAndAccessObbFiles("main","place_here.txt");
-    _patchOBBPath = checkAndAccessObbFiles("patch","patch.obb");
+    _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt");
+    _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb");
 
     //QString messageFilename = checkAndAccessObbFiles("patch","message.txt");
 
     {
         AssetLocation loc = getAssetLocation("patch", "message.txt");
-        _messageText = QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
-
-        _messageText = readAssetFromJava("patch", "message.txt");
+        _messageList << QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
     }
 
     {
-        AssetLocation loc = getAssetLocation("patch", "patch.obb");
-        _messageText2 = QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
+        AssetPackLocation loc = getAssetPackLocation("patch");
+        _messageList << QString("Loc:%1").arg(loc.path.right(20));
+        _messageList << QString("Path:%1").arg(loc.assetPath);
+        _messageList << QString("Storage:%1").arg(loc.storage);
     }
 }
 
@@ -321,24 +296,11 @@ p.begin(this);
     p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
     p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
 
-    {
-        p.drawText(0, 6* fm.height(), "main Path : " + _mainOBBPath.right(40));
-        const QString pathExists = QFile::exists(_mainOBBPath)  ? "Found" : "Not Found";
-        p.drawText(0, 7* fm.height(), "exists: " + pathExists );
-    }
+    int count = 6;
 
+    for(auto& line:_messageList)
     {
-        p.drawText(0, 8* fm.height(), "patch Path : " + _patchOBBPath.right(40));
-
-        const QString pathExists = QFile::exists(_patchOBBPath)  ? "Found" : "Not Found";
-        p.drawText(0, 9* fm.height(), "exists: " + pathExists );
-    }
-
-    {
-        p.drawText(0, 10* fm.height(), "Info: " + _messageText);
-    }
-    {
-        p.drawText(0, 11* fm.height(), "Info: " + _messageText2);
+        p.drawText(0, count++* fm.height(), line);
     }
 
 p.end();

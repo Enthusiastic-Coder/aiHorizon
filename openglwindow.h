@@ -52,10 +52,7 @@ private:
     std::vector<float> _pitchHistory;
     int _bankHistoryIdx = 0;
 
-    QString _mainOBBPath;
-    QString _patchOBBPath;
-    QString _messageText;
-    QString _messageText2;
+    QStringList _messageList;
 };
 
 #endif // OPENGLWINDOW_H
