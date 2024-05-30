@@ -20,6 +20,13 @@ public class AssetPackHelper {
         assetPackManager = AssetPackManagerFactory.getInstance(context);
     }
 
+    public String getAssetPackPath(String packName, String assetName) {
+        AssetLocation assetLocation = assetPackManager.getAssetLocation (packName,assetName);
+        if (assetLocation != null) {
+            return assetLocation.path();
+        }
+        return "";
+    }
 
     public InputStream getObbFileInputStream(String packName, String assetName) throws IOException {
         AssetLocation assetLocation = assetPackManager.getAssetLocation (packName,assetName);
