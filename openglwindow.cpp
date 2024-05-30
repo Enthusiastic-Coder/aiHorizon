@@ -51,12 +51,15 @@ AssetPackLocation getAssetPackLocation(const QString &assetPackName)
                                                             jAssetPackName.object<jstring>());
 
     AssetPackLocation location;
-    if (assetLocation.isValid()) {
+    if (assetLocation.isValid())
+    {
         location.assetPath = assetLocation.callObjectMethod("assetsPath", "()Ljava/lang/String;").toString();
         location.path = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
         location.storage = assetLocation.callMethod<jint>("packStorageMethod", "()I");
-    } else {
-        qDebug() << "Failed to getAssetPackLocation location for" << assetPackName;
+    }
+    else
+    {
+        location.path = "Failed " + assetPackName;
     }
 
     return location;
@@ -80,8 +83,10 @@ AssetLocation getAssetLocation(const QString &assetPackName, const QString &file
         location.path = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
         location.offset = assetLocation.callMethod<jlong>("offset", "()J");
         location.size = assetLocation.callMethod<jlong>("size", "()J");
-    } else {
-        qDebug() << "Failed to get asset location for" << assetPackName << "/" << fileName;
+    }
+    else
+    {
+        location.path = "Failed to get asset location for" + assetPackName + "/" + fileName;
     }
 
     return location;
@@ -114,18 +119,18 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
-    _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt").right(20);
-    _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(20);
+    _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt").right(40);
+    _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(40);
 
     {
         AssetLocation loc = getAssetLocation("patch", "message.txt");
-        _messageList << QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
+        _messageList << QString("%1-%2/%3").arg(loc.path.right(40)).arg(loc.offset).arg(loc.size);
     }
 
     {
         AssetPackLocation loc = getAssetPackLocation("patch");
-        _messageList << QString("Path:%1").arg(loc.path.right(20));
-        _messageList << QString("AssetPath:%1").arg(loc.assetPath.right(20));
+        _messageList << QString("Path:%1").arg(loc.path.right(40));
+        _messageList << QString("AssetPath:%1").arg(loc.assetPath.right(40));
         _messageList << QString("Storage:%1").arg(loc.storage);
     }
 }
