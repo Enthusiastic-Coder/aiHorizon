@@ -16,6 +16,7 @@
 #include <QCoreApplication>
 #include "openglcontextTest.h"
 #include <QDir>
+#include <QResource>
 
 #ifdef Q_OS_ANDROID
 
@@ -114,6 +115,16 @@ OpenGLWindow::OpenGLWindow()
     {
         AssetLocation loc = getAssetLocation("patch", "message.txt");
         _messageText = QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
+
+        QFile f(_patchOBBPath);
+        if( f.open(QIODevice::ReadOnly))
+        {
+            QString str;
+            f.seek(loc.offset);
+            str = f.read(loc.size);
+            _patchOBBPath = str;
+        }
+
     }
 
     {
