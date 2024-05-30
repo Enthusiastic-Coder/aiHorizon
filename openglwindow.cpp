@@ -37,48 +37,20 @@ struct AssetLocation {
     long size =0l;
 };
 
-
-QJniObject getPackLocation(const QString &packName) {
-    // Get the asset pack manager instance
-    QJniObject context = QNativeInterface::QAndroidApplication::context();
-    QJniObject assetPackManager = QJniObject::callStaticObjectMethod(
-        "com/google/android/play/core/assetpacks/AssetPackManagerFactory",
-
-        "getInstance",
-        "(Landroid/content/Context;)Lcom/google/android/play/core/assetpacks/AssetPackManager;",
-        context.object());
-
-    if (assetPackManager.isValid()) {
-        // Convert QString packName to jstring
-        jstring jPackName = QJniObject::fromString(packName).object<jstring>();
-
-        // Call the getPackLocation method of AssetPackManager
-        QJniObject assetLocation = assetPackManager.callObjectMethod(
-            "getPackLocation",
-            "(Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;",
-            jPackName);
-
-        // Check if the returned object is valid
-        if (assetLocation.isValid()) {
-            return assetLocation;
-        } else {
-            // Handle invalid object
-            qDebug() << "Failed to get asset location for pack:" << packName;
-        }
-    } else {
-        // Handle invalid object
-        qDebug() << "Failed to get AssetPackManager instance";
-    }
-
-    return QJniObject();
-}
 AssetPackLocation getAssetPackLocation(const QString &assetPackName)
 {
-    QJniObject assetLocation = getPackLocation(assetPackName);
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper",
+                           "(Landroid/content/Context;)V",
+                           context.object<jobject>());
+
+    QJniObject jAssetPackName = QJniObject::fromString(assetPackName);
+
+    QJniObject assetLocation = assetHelper.callObjectMethod("getPackLocation",
+                    "(Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;",
+                                                            jAssetPackName.object<jstring>());
 
     AssetPackLocation location;
-    location.storage = -1;
-
     if (assetLocation.isValid()) {
         location.path = assetLocation.callObjectMethod("assetsPath", "()Ljava/lang/String;").toString();
         location.assetPath = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
@@ -92,12 +64,16 @@ AssetPackLocation getAssetPackLocation(const QString &assetPackName)
 
 AssetLocation getAssetLocation(const QString &assetPackName, const QString &fileName) {
     QJniObject context = QNativeInterface::QAndroidApplication::context();
-    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper", "(Landroid/content/Context;)V", context.object<jobject>());
+    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper",
+                           "(Landroid/content/Context;)V",
+                           context.object<jobject>());
 
     QJniObject jAssetPackName = QJniObject::fromString(assetPackName);
     QJniObject jFileName = QJniObject::fromString(fileName);
 
-    QJniObject assetLocation = assetHelper.callObjectMethod("getAssetLocation", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetLocation;", jAssetPackName.object<jstring>(), jFileName.object<jstring>());
+    QJniObject assetLocation = assetHelper.callObjectMethod("getAssetLocation",
+                                    "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetLocation;",
+                                                            jAssetPackName.object<jstring>(), jFileName.object<jstring>());
 
     AssetLocation location;
     if (assetLocation.isValid()) {

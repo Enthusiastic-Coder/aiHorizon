@@ -19,6 +19,10 @@ public class AssetPackHelper {
         assetPackManager = AssetPackManagerFactory.getInstance(context);
     }
 
+    public AssetPackLocation getPackLocation(String packName) {
+        return assetPackManager.getPackLocation(packName);
+    }
+
     public AssetLocation getAssetLocation(String packName, String fileName) {
         return assetPackManager.getAssetLocation(packName, fileName);
     }
