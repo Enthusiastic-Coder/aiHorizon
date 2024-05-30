@@ -52,8 +52,8 @@ AssetPackLocation getAssetPackLocation(const QString &assetPackName)
 
     AssetPackLocation location;
     if (assetLocation.isValid()) {
-        location.path = assetLocation.callObjectMethod("assetsPath", "()Ljava/lang/String;").toString();
-        location.assetPath = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
+        location.assetPath = assetLocation.callObjectMethod("assetsPath", "()Ljava/lang/String;").toString();
+        location.path = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
         location.storage = assetLocation.callMethod<jint>("packStorageMethod", "()I");
     } else {
         qDebug() << "Failed to getAssetPackLocation location for" << assetPackName;
@@ -124,8 +124,8 @@ OpenGLWindow::OpenGLWindow()
 
     {
         AssetPackLocation loc = getAssetPackLocation("patch");
-        _messageList << QString("Loc:%1").arg(loc.path.right(20));
-        _messageList << QString("Path:%1").arg(loc.assetPath.right(20));
+        _messageList << QString("Path:%1").arg(loc.path.right(20));
+        _messageList << QString("AssetPath:%1").arg(loc.assetPath.right(20));
         _messageList << QString("Storage:%1").arg(loc.storage);
     }
 }
