@@ -28,25 +28,7 @@ public class AssetPackHelper {
         return "";
     }
 
-    public InputStream getObbFileInputStream(String packName, String assetName) throws IOException {
-        AssetLocation assetLocation = assetPackManager.getAssetLocation (packName,assetName);
-        if (assetLocation != null) {
-            String assetPath = assetLocation.path();
-            long offset = assetLocation.offset();
-            long size = assetLocation.size();
-
-            AssetManager assetManager = context.getAssets();
-
-            try {
-                InputStream inputStream = assetManager.openFd(assetPath).createInputStream();
-                inputStream.skip(offset);
-
-                return inputStream;
-            }
-            catch( IOException e)
-            {
-            }
-        }
-        return null;
+    public AssetLocation getAssetLocation(String packName, String fileName) {
+        return assetPackManager.getAssetLocation(packName, fileName);
     }
 }

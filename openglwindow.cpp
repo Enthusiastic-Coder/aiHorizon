@@ -23,45 +23,11 @@
 #include <QJniEnvironment>
 
 
-QByteArray readObbFile(const QString &assetPackName, const QString &fileName)
-{
-    QJniObject context = QNativeInterface::QAndroidApplication::context();
-    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper", "(Landroid/content/Context;)V",
-                           context.object<jobject>());
-
-    QJniObject jAssetPackName = QJniObject::fromString(assetPackName);
-    QJniObject jFileName = QJniObject::fromString(fileName);
-
-    QJniObject inputStream = assetHelper.callObjectMethod("getObbFileInputStream",
-                                                          "(Ljava/lang/String;Ljava/lang/String;)Ljava/io/InputStream;",
-                                                          jAssetPackName.object<jstring>(),
-                                                          jFileName.object<jstring>());
-
-    if (inputStream.isValid()) {
-        QJniEnvironment env;
-        jclass inputStreamClass = env->GetObjectClass(inputStream.object<jobject>());
-        jmethodID readMethod = env->GetMethodID(inputStreamClass, "read", "([B)I");
-        jmethodID availableMethod = env->GetMethodID(inputStreamClass, "available", "()I");
-
-        int available = env->CallIntMethod(inputStream.object<jobject>(), availableMethod);
-        QByteArray buffer(available, 0);
-        jbyteArray jBuffer = env->NewByteArray(available);
-        env->CallIntMethod(inputStream.object<jobject>(), readMethod, jBuffer);
-
-        env->GetByteArrayRegion(jBuffer, 0, available, reinterpret_cast<jbyte*>(buffer.data()));
-        env->DeleteLocalRef(jBuffer);
-
-        return buffer;
-    } else {
-        QString ret;
-        ret.append("Failed to get InputStream for asset:");
-        ret.append(assetPackName);
-        ret.append( "/" );
-        ret.append(fileName);
-        return ret.toLocal8Bit();
-    }
-}
-
+struct AssetLocation {
+    QString path;
+    long offset;
+    long size;
+};
 
 QString getAssetPackPath(const QString &packName, const QString &assetName) {
      QJniObject context = QNativeInterface::QAndroidApplication::context();
@@ -90,6 +56,27 @@ QString getAssetPackPath(const QString &packName, const QString &assetName) {
         return "Failed to create AssetPackHelper instance";
     }
     return "";
+}
+
+AssetLocation getAssetLocation(const QString &assetPackName, const QString &fileName) {
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper", "(Landroid/content/Context;)V", context.object<jobject>());
+
+    QJniObject jAssetPackName = QJniObject::fromString(assetPackName);
+    QJniObject jFileName = QJniObject::fromString(fileName);
+
+    QJniObject assetLocation = assetHelper.callObjectMethod("getAssetLocation", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetLocation;", jAssetPackName.object<jstring>(), jFileName.object<jstring>());
+
+    AssetLocation location;
+    if (assetLocation.isValid()) {
+        location.path = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
+        location.offset = assetLocation.callMethod<jlong>("offset", "()J");
+        location.size = assetLocation.callMethod<jlong>("size", "()J");
+    } else {
+        qDebug() << "Failed to get asset location for" << assetPackName << "/" << fileName;
+    }
+
+    return location;
 }
 
 #endif
@@ -124,8 +111,8 @@ OpenGLWindow::OpenGLWindow()
 
     //QString messageFilename = checkAndAccessObbFiles("patch","message.txt");
 
-    QByteArray obbData = readObbFile("patch", "message.txt");
-    _messageText = obbData;
+    AssetLocation loc = getAssetLocation("patch", "message.txt");
+    _messageText = QString("%1-%2/%3").arg(loc.path).arg(loc.offset).arg(loc.size);
 }
 
 OpenGLWindow::~OpenGLWindow()
