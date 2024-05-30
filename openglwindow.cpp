@@ -53,8 +53,12 @@ QByteArray readObbFile(const QString &assetPackName, const QString &fileName)
 
         return buffer;
     } else {
-        qDebug() << "Failed to get InputStream for asset:" << assetPackName << "/" << fileName;
-        return QByteArray();
+        QString ret;
+        ret.append("Failed to get InputStream for asset:");
+        ret.append(assetPackName);
+        ret.append( "/" );
+        ret.append(fileName);
+        return ret.toLocal8Bit();
     }
 }
 
