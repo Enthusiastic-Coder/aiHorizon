@@ -113,12 +113,12 @@ OpenGLWindow::OpenGLWindow()
 
     {
         AssetLocation loc = getAssetLocation("patch", "message.txt");
-        _messageText = QString("%1-%2/%3").arg(loc.path.right(5)).arg(loc.offset).arg(loc.size);
+        _messageText = QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
     }
 
     {
         AssetLocation loc = getAssetLocation("patch", "patch.obb");
-        _messageText2 = QString("%1-%2/%3").arg(loc.path.right(5)).arg(loc.offset).arg(loc.size);
+        _messageText2 = QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
     }
 }
 
