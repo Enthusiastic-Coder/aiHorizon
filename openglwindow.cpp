@@ -37,20 +37,48 @@ struct AssetLocation {
     long size =0l;
 };
 
+
+QJniObject getPackLocation(const QString &packName) {
+    // Get the asset pack manager instance
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    QJniObject assetPackManager = QJniObject::callStaticObjectMethod(
+        "com/google/android/play/core/assetpacks/AssetPackManagerFactory",
+
+        "getInstance",
+        "(Landroid/content/Context;)Lcom/google/android/play/core/assetpacks/AssetPackManager;",
+        context.object());
+
+    if (assetPackManager.isValid()) {
+        // Convert QString packName to jstring
+        jstring jPackName = QJniObject::fromString(packName).object<jstring>();
+
+        // Call the getPackLocation method of AssetPackManager
+        QJniObject assetLocation = assetPackManager.callObjectMethod(
+            "getPackLocation",
+            "(Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;",
+            jPackName);
+
+        // Check if the returned object is valid
+        if (assetLocation.isValid()) {
+            return assetLocation;
+        } else {
+            // Handle invalid object
+            qDebug() << "Failed to get asset location for pack:" << packName;
+        }
+    } else {
+        // Handle invalid object
+        qDebug() << "Failed to get AssetPackManager instance";
+    }
+
+    return QJniObject();
+}
 AssetPackLocation getAssetPackLocation(const QString &assetPackName)
 {
-    QJniObject context = QNativeInterface::QAndroidApplication::context();
-    QJniObject assetHelper("com/enthusiasticcoder/aihorizon/AssetPackHelper",
-                           "(Landroid/content/Context;)V",
-                           context.object<jobject>());
-
-    QJniObject jAssetPackName = QJniObject::fromString(assetPackName);
-
-    QJniObject assetLocation = assetHelper.callObjectMethod("getPackLocation",
-                    "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/android/play/core/assetpacks/AssetPackLocation;",
-                                                            jAssetPackName.object<jstring>());
+    QJniObject assetLocation = getPackLocation(assetPackName);
 
     AssetPackLocation location;
+    location.storage = -1;
+
     if (assetLocation.isValid()) {
         location.path = assetLocation.callObjectMethod("assetsPath", "()Ljava/lang/String;").toString();
         location.assetPath = assetLocation.callObjectMethod("path", "()Ljava/lang/String;").toString();
@@ -61,7 +89,6 @@ AssetPackLocation getAssetPackLocation(const QString &assetPackName)
 
     return location;
 }
-
 
 AssetLocation getAssetLocation(const QString &assetPackName, const QString &fileName) {
     QJniObject context = QNativeInterface::QAndroidApplication::context();
@@ -111,10 +138,8 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
-    _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt");
-    _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb");
-
-    //QString messageFilename = checkAndAccessObbFiles("patch","message.txt");
+    _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt").right(20);
+    _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(20);
 
     {
         AssetLocation loc = getAssetLocation("patch", "message.txt");

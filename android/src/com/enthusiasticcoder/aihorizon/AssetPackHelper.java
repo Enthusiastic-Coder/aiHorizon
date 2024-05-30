@@ -13,16 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class AssetPackHelper {
-    private Context context;
     private AssetPackManager assetPackManager;
 
     public AssetPackHelper(Context context) {
-        this.context = context;
         assetPackManager = AssetPackManagerFactory.getInstance(context);
-    }
-
-    public AssetPackLocation getPackLocation(String packName) {
-        return assetPackManager.getPackLocation(packName);
     }
 
     public AssetLocation getAssetLocation(String packName, String fileName) {
