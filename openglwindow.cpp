@@ -80,6 +80,35 @@ AssetLocation getAssetLocation(const QString &assetPackName, const QString &file
     return location;
 }
 
+QByteArray readAssetFromJava(const QString &assetPackName, const QString &fileName) {
+
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    QJniObject javaAssetPackName = QJniObject::fromString(assetPackName);
+    QJniObject javaFileName = QJniObject::fromString(fileName);
+    QJniObject byteArray = QJniObject::callStaticObjectMethod(
+        "com/enthusiasticcoder/aihorizon/AssetReader",
+        "readAsset",
+        "(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)[B",
+        context.object(),
+        javaAssetPackName.object<jstring>(),
+        javaFileName.object<jstring>()
+        );
+
+    if (byteArray.isValid()) {
+        QJniEnvironment env;
+        jbyteArray javaBytes = byteArray.object<jbyteArray>();
+        jsize length = env->GetArrayLength(javaBytes);
+        jbyte *bytes = env->GetByteArrayElements(javaBytes, nullptr);
+        QByteArray result(reinterpret_cast<const char*>(bytes), length);
+        env->ReleaseByteArrayElements(javaBytes, bytes, JNI_ABORT);
+        return result;
+    } else {
+        qDebug() << "Failed to read asset" << assetPackName << fileName;
+        return QByteArray{"Null data"};
+    }
+}
+
+
 #endif
 
 QString checkAndAccessObbFiles(const QString &packName, const QString &assetName) {
@@ -116,15 +145,7 @@ OpenGLWindow::OpenGLWindow()
         AssetLocation loc = getAssetLocation("patch", "message.txt");
         _messageText = QString("%1-%2/%3").arg(loc.path.right(20)).arg(loc.offset).arg(loc.size);
 
-        QFile f(_patchOBBPath);
-        if( f.open(QIODevice::ReadOnly))
-        {
-            QString str;
-            f.seek(loc.offset);
-            str = f.read(loc.size);
-            _patchOBBPath = str;
-        }
-
+        _messageText = readAssetFromJava("patch", "message.txt");
     }
 
     {
