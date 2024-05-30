@@ -55,6 +55,7 @@ private:
     QString _mainOBBPath;
     QString _patchOBBPath;
     QString _messageText;
+    QString _messageText2;
 };
 
 #endif // OPENGLWINDOW_H

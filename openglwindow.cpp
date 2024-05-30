@@ -111,8 +111,15 @@ OpenGLWindow::OpenGLWindow()
 
     //QString messageFilename = checkAndAccessObbFiles("patch","message.txt");
 
-    AssetLocation loc = getAssetLocation("patch", "message.txt");
-    _messageText = QString("%1-%2/%3").arg(loc.path).arg(loc.offset).arg(loc.size);
+    {
+        AssetLocation loc = getAssetLocation("patch", "message.txt");
+        _messageText = QString("%1-%2/%3").arg(loc.path.right(5)).arg(loc.offset).arg(loc.size);
+    }
+
+    {
+        AssetLocation loc = getAssetLocation("patch", "patch.obb");
+        _messageText2 = QString("%1-%2/%3").arg(loc.path.right(5)).arg(loc.offset).arg(loc.size);
+    }
 }
 
 OpenGLWindow::~OpenGLWindow()
@@ -296,7 +303,10 @@ p.begin(this);
     }
 
     {
-        p.drawText(0, 10* fm.height(), "PathFile : " + _messageText);
+        p.drawText(0, 10* fm.height(), "Info: " + _messageText);
+    }
+    {
+        p.drawText(0, 11* fm.height(), "Info: " + _messageText2);
     }
 
 p.end();
