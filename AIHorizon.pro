@@ -31,6 +31,12 @@ include(AIHorizon.pri)
 #}
 
 
+win32 {
+scripts.files += scripts/*.obb
+scripts.path = $$DEPLOY_DIR/scripts
+INSTALLS += scripts
+}
+
 aiHorizon.files += aiHorizon/*
 aiHorizon.path = $$DEPLOY_DIR/aiHorizon
 INSTALLS += aiHorizon

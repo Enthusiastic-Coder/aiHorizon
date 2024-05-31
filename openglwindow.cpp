@@ -139,11 +139,20 @@ OpenGLWindow::OpenGLWindow()
     _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt").right(40);
     _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(40);
 
-
+#ifdef Q_OS_ANDROID
     QByteArray mainObb = getDataFromAsset("main","main.obb");
     _messageList << QString("Null:%1").arg(mainObb.isNull());
-
     QResource::registerResource(mainObb);
+
+    QByteArray patchObb = getDataFromAsset("patch","patch.obb");
+    _messageList << QString("Null:%1").arg(patchObb.isNull());
+
+    QResource::registerResource(patchObb);
+
+#else
+    QResource::registerResource("scripts/main.obb");
+    QResource::registerResource("scripts/patch.obb");
+#endif
 
     QFile osmFile(":/osmtiles/osm/7/64_42.png");
     if( osmFile.open(QIODevice::ReadOnly))
@@ -153,10 +162,6 @@ OpenGLWindow::OpenGLWindow()
     else
         _messageList << "osmtiles not found";
 
-    QByteArray patchObb = getDataFromAsset("patch","patch.obb");
-    _messageList << QString("Null:%1").arg(patchObb.isNull());
-
-    QResource::registerResource(patchObb);
 
     QFile bus119(":/data/Routes/outbound/bus/119.txt");
     if( bus119.open(QIODevice::Text|QIODevice::ReadOnly))
