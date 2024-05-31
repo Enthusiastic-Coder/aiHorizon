@@ -48,6 +48,8 @@ private:
     QAccelerometer _accelerometer;
     QOrientationSensor _orientation;
 
+    QImage _mainObbImg;
+
     std::vector<float> _bankHistory;
     std::vector<float> _pitchHistory;
     int _bankHistoryIdx = 0;

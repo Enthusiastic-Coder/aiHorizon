@@ -92,6 +92,23 @@ AssetLocation getAssetLocation(const QString &assetPackName, const QString &file
     return location;
 }
 
+QByteArray getDataFromAsset(const QString &assetPackName, const QString &fileName)
+{
+    AssetLocation loc = getAssetLocation(assetPackName, fileName);
+
+    QByteArray data;
+
+    QFile file(loc.path);
+
+    if( file.open(QIODevice::ReadOnly))
+    {
+        file.seek(loc.offset);
+        data = file.read(loc.size);
+    }
+
+    return data;
+}
+
 #endif
 
 QString checkAndAccessObbFiles(const QString &packName, const QString &assetName) {
@@ -122,17 +139,32 @@ OpenGLWindow::OpenGLWindow()
     _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt").right(40);
     _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(40);
 
-    {
-        AssetLocation loc = getAssetLocation("patch", "message.txt");
-        _messageList << QString("%1-%2/%3").arg(loc.path.right(40)).arg(loc.offset).arg(loc.size);
-    }
 
+    QByteArray mainObb = getDataFromAsset("main","main.obb");
+    _messageList << QString("Null:%1").arg(mainObb.isNull());
+
+    QResource::registerResource(mainObb);
+
+    QFile osmFile(":/osmtiles/osm/7/64_42.png");
+    if( osmFile.open(QIODevice::ReadOnly))
     {
-        AssetPackLocation loc = getAssetPackLocation("patch");
-        _messageList << QString("Path:%1").arg(loc.path.right(40));
-        _messageList << QString("AssetPath:%1").arg(loc.assetPath.right(40));
-        _messageList << QString("Storage:%1").arg(loc.storage);
+        _mainObbImg = QImage::fromData(osmFile.readAll());
     }
+    else
+        _messageList << "osmtiles not found";
+
+    QByteArray patchObb = getDataFromAsset("patch","patch.obb");
+    _messageList << QString("Null:%1").arg(patchObb.isNull());
+
+    QResource::registerResource(patchObb);
+
+    QFile bus119(":/data/Routes/outbound/bus/119.txt");
+    if( bus119.open(QIODevice::Text|QIODevice::ReadOnly))
+    {
+        _messageList<< "Bus119:" + bus119.read(40);
+    }
+    else
+        _messageList << "Bus 119 NOT FOUND";
 }
 
 OpenGLWindow::~OpenGLWindow()
@@ -184,6 +216,7 @@ void OpenGLWindow::paintGL()
 //    p.drawText(100,100,"HELLO");
 //    p.restore();
 //    p.end();
+
 
     _shaderProgram->use();
 
@@ -308,6 +341,8 @@ p.begin(this);
     {
         p.drawText(0, count++* fm.height(), line);
     }
+
+    p.drawImage(5, count * fm.height(), _mainObbImg);
 
 p.end();
 }
