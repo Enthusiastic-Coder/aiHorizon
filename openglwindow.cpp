@@ -140,19 +140,30 @@ OpenGLWindow::OpenGLWindow()
     _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(40);
 
 #ifdef Q_OS_ANDROID
-    QByteArray mainObb = getDataFromAsset("main","main.obb");
-    _messageList << QString("Null:%1").arg(mainObb.isNull());
-    QResource::registerResource(mainObb);
-
-    QByteArray patchObb = getDataFromAsset("patch","patch.obb");
-    _messageList << QString("Null:%1").arg(patchObb.isNull());
-
-    QResource::registerResource(patchObb);
+    _mainObbData = getDataFromAsset("main","main.obb");
+    _patchObbData = getDataFromAsset("patch","patch.obb");
 
 #else
-    QResource::registerResource("scripts/main.obb");
-    QResource::registerResource("scripts/patch.obb");
+    auto getData = [](QString filename) {
+
+        QFile file(filename);
+        if (file.open(QIODevice::ReadOnly))
+        {
+            return file.readAll();
+        }
+
+        return QByteArray{};
+    };
+
+    _mainObbData = getData("scripts/main.obb");
+    _patchObbData = getData("scripts/patch.obb");
 #endif
+
+    _messageList << QString("Null:%1").arg(_mainObbData.isNull()?"Yes":"No");
+    _messageList << QString("Null:%1").arg(_patchObbData.isNull()?"Yes":"No");
+
+    QResource::registerResource(reinterpret_cast<const uchar*>(_mainObbData.constData()));
+    QResource::registerResource(reinterpret_cast<const uchar*>(_patchObbData.constData()));
 
     QFile osmFile(":/osmtiles/osm/7/64_42.png");
     if( osmFile.open(QIODevice::ReadOnly))
