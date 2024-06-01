@@ -162,8 +162,12 @@ OpenGLWindow::OpenGLWindow()
     _messageList << QString("Null:%1").arg(_mainObbData.isNull()?"Yes":"No");
     _messageList << QString("Null:%1").arg(_patchObbData.isNull()?"Yes":"No");
 
-    QResource::registerResource(reinterpret_cast<const uchar*>(_mainObbData.constData()));
-    QResource::registerResource(reinterpret_cast<const uchar*>(_patchObbData.constData()));
+    auto registerResource = [](QByteArray data) {
+        QResource::registerResource(reinterpret_cast<const uchar*>(data.constData()));
+    };
+
+    registerResource(_mainObbData);
+    registerResource(_patchObbData);
 
     QFile osmFile(":/osmtiles/osm/7/64_42.png");
     if( osmFile.open(QIODevice::ReadOnly))
