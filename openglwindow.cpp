@@ -136,8 +136,9 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
-    _messageList <<  "main:" + checkAndAccessObbFiles("main","place_here.txt").right(40);
+    _messageList << "main:" + checkAndAccessObbFiles("main","place_here.txt").right(40);
     _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(40);
+    _messageList << "extra:"+ checkAndAccessObbFiles("extra","extra.obb").right(40);
 
 #ifdef Q_OS_ANDROID
     _mainObbData = getDataFromAsset("main","main.obb");
@@ -252,11 +253,37 @@ void OpenGLWindow::paintGL()
     float bank=5.56f;
     float pitch=-12.56f;
 
+
+    QPainter p(this);
+    p.fillRect(QRect{0,0,width(), height()}, Qt::blue);
+    QFont font("Verdana", 14);
+    QFontMetrics fm(font);
+    p.setFont(font);
+    p.setPen(Qt::white);
+    QString str = QString("Pitch:%1").arg(pitch,4, 'f', 1, '0');
+    p.drawText(0,fm.height(), str);
+    str = QString("Bank:%1").arg(bank,4, 'f', 1, '0');
+    p.drawText(0,2* fm.height(), str);
+
+    p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
+    p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
+    p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
+
+    int count = 6;
+
+    for(auto& line:_messageList)
+    {
+        p.drawText(0, count++* fm.height(), line);
+    }
+
+    p.drawImage(5, count * fm.height(), _mainObbImg);
+
+    p.beginNativePainting();
+
     glEnable(GL_DEPTH_TEST);
 
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
-    QPainter p;
 //    p.begin(this);
 //    p.save();
 //    p.setPen(Qt::white);
@@ -367,31 +394,7 @@ void OpenGLWindow::paintGL()
 
     _shaderProgram->release();
 
-//    QPainter p(this);
-p.begin(this);
-    QFont font("Verdana", 14);
-    QFontMetrics fm(font);
-    p.setFont(font);
-    p.setPen(Qt::white);
-    QString str = QString("Pitch:%1").arg(pitch,4, 'f', 1, '0');
-    p.drawText(0,fm.height(), str);
-    str = QString("Bank:%1").arg(bank,4, 'f', 1, '0');
-    p.drawText(0,2* fm.height(), str);
-
-    p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
-    p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
-    p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
-
-    int count = 6;
-
-    for(auto& line:_messageList)
-    {
-        p.drawText(0, count++* fm.height(), line);
-    }
-
-    p.drawImage(5, count * fm.height(), _mainObbImg);
-
-p.end();
+    p.endNativePainting();
 }
 
 void OpenGLWindow::resizeGL(int w, int h)
