@@ -1,7 +1,5 @@
 SOURCES += main.cpp \
     openglwindow.cpp \
-    meshloader.cpp \
-    mesh.cpp \
     camera.cpp \
     vector3d.cpp \
     aimeshloader.cpp \
@@ -11,9 +9,7 @@ SOURCES += main.cpp \
 
 HEADERS += \
     openglwindow.h \
-    meshloader.h \
     meshData.h \
-    mesh.h \
     camera.h \
     vector3d.h \
     aimeshloader.h \

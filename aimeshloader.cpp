@@ -1,16 +1,19 @@
 #include "aimeshloader.h"
 
-AIMeshLoader::AIMeshLoader(std::string filename)
-    :meshLoader(filename)
-{
+#include <QOpenGLShaderProgram>
 
+AIMeshLoader::AIMeshLoader(std::string filename, std::shared_ptr<QtTextureManager> t, std::shared_ptr<AssimpMeshManager> meshManager)
+    :meshLoader(t, meshManager)
+{
+    load(QString::fromStdString(filename));
 }
 
-void AIMeshLoader::draw(unsigned int programId)
+void AIMeshLoader::draw(OpenGLShaderProgram& p)
 {
-    for(size_t i=0;i < _meshes.size();i++)
+    auto& meshes = getMeshes();
+    for(auto& mesh: meshes)
     {
-        std::string name = _meshes[i]->name();
+        std::string name = mesh->name();
         bool bMod=false;
         if( name == "secondary_ai_color_Disk")
         {
@@ -19,7 +22,7 @@ void AIMeshLoader::draw(unsigned int programId)
 
         }
         else
-            _meshes[i]->draw(programId);
+            mesh.draw(p);
 
     }
 }
