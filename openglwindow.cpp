@@ -212,12 +212,23 @@ OpenGLWindow::~OpenGLWindow()
     _scene = 0;
 }
 
+QString resourceFolder(QString filename)
+{
+#ifdef Q_OS_ANDROID
+    return "assets:/" + filename;
+#endif
+    return filename;
+}
+
+
 void OpenGLWindow::initializeGL()
 {
     QOpenGLFunctions::initializeOpenGLFunctions();
-//    copyAssets(true);
-    _shaderProgram= new shader("shaders/vertex.vert", "shaders/fragment.frag");
-    _scene = new AIMeshLoader("aiHorizon/output.obj");
+
+    _shaderProgram= new shader(resourceFolder("shaders/vertex.vert").toStdString(),
+                                resourceFolder("shaders/fragment.frag").toStdString());
+
+    _scene = new AIMeshLoader(resourceFolder("aiHorizon/output.obj").toStdString());
 
     const char* version = (const char*)glGetString(GL_VERSION);
 
