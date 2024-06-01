@@ -1,12 +1,17 @@
 #ifndef OPENGLWINDOW_H
 #define OPENGLWINDOW_H
 
+#include <jibbs/mesh/AssimpMeshManager.h>
+#include <jibbs/opengl/QtTextureManager.h>
+#include <jibbs/opengl/OpenGLShaderProgram.h>
+
 #include <glm/glm.hpp>
 #include "matrices.h"
 
 #include <QOpenGLWindow>
 #include <QBasicTimer>
 #include <QTimer>
+#include <QOpenGLShaderProgram>
 
 #include <QAccelerometer>
 #include <QAccelerometerFilter>
@@ -38,7 +43,11 @@ protected:
     void timerEvent(QTimerEvent *e) Q_DECL_OVERRIDE;
 
 private:
-    shader* _shaderProgram;
+
+    std::shared_ptr<QtTextureManager> _texManager = std::make_shared<QtTextureManager>("defaultTextureManager");
+    std::shared_ptr<AssimpMeshManager> _meshManager = std::make_shared<AssimpMeshManager>();
+
+    OpenGLShaderProgram _shaderProgram;
     meshLoader* _scene;
 
     matrices _pipeline;

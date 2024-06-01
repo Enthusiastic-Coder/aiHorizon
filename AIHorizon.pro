@@ -6,6 +6,11 @@
 
 QT       += core gui sensors opengl
 
+
+#need to reemove
+ QT += network
+ QT += core-private
+
 TARGET = AIHorizon
 CONFIG   += console
 
@@ -16,7 +21,7 @@ CONFIG += c++11
 INCLUDEPATH += sdk/include
 INCLUDEPATH += glm
 
-include(sdk/qMake/qMakeDestination.pri)
+include(sdk/jibbs.pri)
 include(assimp2/assimp.pri)
 
 #win32 {

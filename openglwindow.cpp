@@ -1,7 +1,6 @@
 #include "openglwindow.h"
 
 #include <camera.h>
-#include "aimeshloader.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -14,6 +13,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QCoreApplication>
+#include "jibbs/mesh/meshloader.h"
 #include "openglcontextTest.h"
 #include <QDir>
 #include <QResource>
@@ -206,9 +206,6 @@ OpenGLWindow::OpenGLWindow()
 
 OpenGLWindow::~OpenGLWindow()
 {
-    delete _shaderProgram;
-    _shaderProgram =0;
-
     delete _scene;
     _scene = 0;
 }
@@ -226,10 +223,11 @@ void OpenGLWindow::initializeGL()
 {
     QOpenGLFunctions::initializeOpenGLFunctions();
 
-    _shaderProgram= new shader(resourceFolder("shaders/vertex.vert").toStdString(),
+    _shaderProgram.loadFiles( resourceFolder("shaders/vertex.vert").toStdString(),
                                 resourceFolder("shaders/fragment.frag").toStdString());
 
-    _scene = new AIMeshLoader(resourceFolder("aiHorizon/output.obj").toStdString());
+    _scene = new meshLoader(_texManager, _meshManager);
+    _scene->load(resourceFolder("aiHorizon/output.obj"));
 
     const char* version = (const char*)glGetString(GL_VERSION);
 
@@ -292,7 +290,7 @@ void OpenGLWindow::paintGL()
 //    p.end();
 
 
-    _shaderProgram->use();
+    _shaderProgram.use();
 
     _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
     _pipeline.loadIdentity();
@@ -301,9 +299,9 @@ void OpenGLWindow::paintGL()
     _pipeline.matrixMode(matrixModes::VIEW_MATRIX);
     _pipeline.loadIdentity();
 
-    glUniform3f(glGetUniformLocation(_shaderProgram->getProgramId(), "lightPos"), 0, 1, 2 );
+    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "lightPos"), 0, 1, 2 );
 
-    glUniform3f(glGetUniformLocation(_shaderProgram->getProgramId(), "cameraPosition"),
+    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "cameraPosition"),
                     cam.getLocation().x,cam.getLocation().y,cam.getLocation().z);
 
     QAccelerometerReading* reading = _accelerometer.reading();
@@ -356,9 +354,9 @@ void OpenGLWindow::paintGL()
 
     pitch /= _pitchHistory.size();
 
-    std::vector<mesh*>& meshes = _scene->getMeshes();
+    const auto& meshes = _scene->getMeshes();
 
-    for( size_t i =0 ; i < meshes.size(); ++i)
+    for( const auto& mesh: meshes)
     {
         _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
         _pipeline.loadIdentity();
@@ -372,7 +370,7 @@ void OpenGLWindow::paintGL()
         else
             _pipeline.translate(0,0, -5.5);
 
-        if( meshes[i]->name() == "secondary_ai_color_Disk")
+        if( mesh->name() == "secondary_ai_color_Disk")
         {
             _pipeline.rotateZ(-int(bank));
 #ifdef ANDROID
@@ -382,17 +380,17 @@ void OpenGLWindow::paintGL()
 #endif
         }
 
-        if( meshes[i]->name() == "secondary_ai_color_Housing__Orange")
+        if( mesh->name() == "secondary_ai_color_Housing__Orange")
         {
             _pipeline.rotateZ(-int(bank));
         }
 
-        _pipeline.updateMatrices(_shaderProgram->getProgramId());
+        _pipeline.updateMatrices(_shaderProgram.getProgramID());
 
-        meshes[i]->draw(_shaderProgram->getProgramId());
+        mesh.draw(_shaderProgram);
     }
 
-    _shaderProgram->release();
+    _shaderProgram.useDefault();
 
     p.endNativePainting();
 }
