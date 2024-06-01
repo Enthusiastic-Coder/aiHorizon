@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/extra">
+        <file>main.cpp</file>
+    </qresource>
+</RCC>

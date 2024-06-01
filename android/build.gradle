@@ -80,5 +80,5 @@ android {
         ndk.abiFilters = qtTargetAbiList.split(",")
     }
 
-    assetPacks = [":main", ":patch"]
+    assetPacks = [":main", ":patch", ":extra"]
 }

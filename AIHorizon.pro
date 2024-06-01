@@ -45,7 +45,8 @@ shaders.files += shaders/*
 shaders.path = $$DEPLOY_DIR/shaders
 INSTALLS += shaders
 
-RESOURCES +=
+RESOURCES += \
+    extra.qrc
 
 DISTFILES += $$files("shaders/*", true) $$files("android/*", true)
 
