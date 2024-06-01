@@ -51,6 +51,7 @@ private:
     QImage _mainObbImg;
     QByteArray _mainObbData;
     QByteArray _patchObbData;
+    QByteArray _extraObbData;
 
     std::vector<float> _bankHistory;
     std::vector<float> _pitchHistory;

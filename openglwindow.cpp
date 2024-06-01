@@ -142,7 +142,7 @@ OpenGLWindow::OpenGLWindow()
 #ifdef Q_OS_ANDROID
     _mainObbData = getDataFromAsset("main","main.obb");
     _patchObbData = getDataFromAsset("patch","patch.obb");
-
+    _extraObbData = getDataFromAsset("extra","extra.obb");
 #else
     auto getData = [](QString filename) {
 
@@ -157,10 +157,12 @@ OpenGLWindow::OpenGLWindow()
 
     _mainObbData = getData("scripts/main.obb");
     _patchObbData = getData("scripts/patch.obb");
+    _extraObbData = getData("scripts/extra.obb");
 #endif
 
     _messageList << QString("Null:%1").arg(_mainObbData.isNull()?"Yes":"No");
     _messageList << QString("Null:%1").arg(_patchObbData.isNull()?"Yes":"No");
+    _messageList << QString("Null:%1").arg(_extraObbData.isNull()?"Yes":"No");
 
     auto registerResource = [](QByteArray data) {
         QResource::registerResource(reinterpret_cast<const uchar*>(data.constData()));
@@ -168,23 +170,37 @@ OpenGLWindow::OpenGLWindow()
 
     registerResource(_mainObbData);
     registerResource(_patchObbData);
+    registerResource(_extraObbData);
 
-    QFile osmFile(":/osmtiles/osm/7/64_42.png");
-    if( osmFile.open(QIODevice::ReadOnly))
     {
-        _mainObbImg = QImage::fromData(osmFile.readAll());
+        QFile osmFile(":/osmtiles/osm/7/64_42.png");
+        if( osmFile.open(QIODevice::ReadOnly))
+        {
+            _mainObbImg = QImage::fromData(osmFile.readAll());
+        }
+        else
+            _messageList << "osmtiles not found";
     }
-    else
-        _messageList << "osmtiles not found";
 
-
-    QFile bus119(":/data/Routes/outbound/bus/119.txt");
-    if( bus119.open(QIODevice::Text|QIODevice::ReadOnly))
     {
-        _messageList<< "Bus119:" + bus119.read(40);
+        QFile bus119(":/data/Routes/outbound/bus/119.txt");
+        if( bus119.open(QIODevice::Text|QIODevice::ReadOnly))
+        {
+            _messageList<< "Bus119:" + bus119.read(40);
+        }
+        else
+            _messageList << "Bus 119 NOT FOUND";
     }
-    else
-        _messageList << "Bus 119 NOT FOUND";
+
+    {
+        QFile mainCpp(":/extra/main.cpp");
+        if( mainCpp.open(QIODevice::Text|QIODevice::ReadOnly))
+        {
+            _messageList<< "mainCpp:" + mainCpp.read(40);
+        }
+        else
+            _messageList << "mainCpp NOT FOUND";
+    }
 }
 
 OpenGLWindow::~OpenGLWindow()
