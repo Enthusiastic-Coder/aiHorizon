@@ -1,7 +1,6 @@
 #include "openglwindow.h"
 
 #include <camera.h>
-#include "aimeshloader.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -14,6 +13,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QCoreApplication>
+#include "jibbs/mesh/meshloader.h"
 #include "openglcontextTest.h"
 #include <QDir>
 #include <QResource>
@@ -226,7 +226,8 @@ void OpenGLWindow::initializeGL()
     _shaderProgram.loadFiles( resourceFolder("shaders/vertex.vert").toStdString(),
                                 resourceFolder("shaders/fragment.frag").toStdString());
 
-    _scene = new AIMeshLoader(resourceFolder("aiHorizon/output.obj").toStdString(), _texManager, _meshManager);
+    _scene = new meshLoader(_texManager, _meshManager);
+    _scene->load(resourceFolder("aiHorizon/output.obj"));
 
     const char* version = (const char*)glGetString(GL_VERSION);
 
