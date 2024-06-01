@@ -9,6 +9,7 @@ QT       += core gui sensors opengl
 
 #need to reemove
  QT += network
+ QT += core-private
 
 TARGET = AIHorizon
 CONFIG   += console
