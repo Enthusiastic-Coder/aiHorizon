@@ -123,7 +123,7 @@ QString checkAndAccessObbFiles(const QString &packName, const QString &assetName
         // Access files in mainPackPath
     }
 #else
-    return "Windows";
+    return QString("%1:%2").arg(packName, assetName);
 #endif
 }
 
