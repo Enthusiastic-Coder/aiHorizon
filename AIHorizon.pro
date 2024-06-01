@@ -17,7 +17,7 @@ INCLUDEPATH += sdk/include
 INCLUDEPATH += glm
 
 include(sdk/qMake/qMakeDestination.pri)
-include(assimp/assimp.pri)
+include(assimp2/assimp.pri)
 
 #win32 {
 #    SOURCES += sdk/include/GLee.c
