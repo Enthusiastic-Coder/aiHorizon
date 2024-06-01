@@ -5,3 +5,6 @@ android/main/src/main/assets/main.obb
 android/patch/src/main/assets/patch.obb
 scripts/main.obb
 scripts/patch.obb
+scripts/extra.obb.bak
+scripts/extra.obb
+android/extra/src/main/assets/extra.obb
