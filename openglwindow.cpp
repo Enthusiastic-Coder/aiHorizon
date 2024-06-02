@@ -242,59 +242,6 @@ void OpenGLWindow::paintGL()
     float bank=5.56f;
     float pitch=-12.56f;
 
-
-    QPainter p(this);
-    p.fillRect(QRect{0,0,width(), height()}, Qt::blue);
-    QFont font("Verdana", 14);
-    QFontMetrics fm(font);
-    p.setFont(font);
-    p.setPen(Qt::white);
-    QString str = QString("Pitch:%1").arg(pitch,4, 'f', 1, '0');
-    p.drawText(0,fm.height(), str);
-    str = QString("Bank:%1").arg(bank,4, 'f', 1, '0');
-    p.drawText(0,2* fm.height(), str);
-
-    p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
-    p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
-    p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
-
-    int count = 6;
-
-    for(auto& line:_messageList)
-    {
-        p.drawText(0, count++* fm.height(), line);
-    }
-
-    p.drawImage(5, count * fm.height(), _mainObbImg);
-
-    p.beginNativePainting();
-
-    glEnable(GL_DEPTH_TEST);
-
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-//    p.begin(this);
-//    p.save();
-//    p.setPen(Qt::white);
-//    p.drawText(100,100,"HELLO");
-//    p.restore();
-//    p.end();
-
-
-    _shaderProgram.use();
-
-    _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
-    _pipeline.loadIdentity();
-    _pipeline.translate(0,0, -5.5);
-
-    _pipeline.matrixMode(matrixModes::VIEW_MATRIX);
-    _pipeline.loadIdentity();
-
-    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "lightPos"), 0, 1, 2 );
-
-    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "cameraPosition"),
-                    cam.getLocation().x,cam.getLocation().y,cam.getLocation().z);
-
     QAccelerometerReading* reading = _accelerometer.reading();
     QOrientationReading* o = _orientation.reading();
 
@@ -345,7 +292,53 @@ void OpenGLWindow::paintGL()
 
     pitch /= _pitchHistory.size();
 
+
+    QPainter p(this);
+    p.fillRect(QRect{0,0,width(), height()}, Qt::blue);
+    QFont font("Verdana", 14);
+    QFontMetrics fm(font);
+    p.setFont(font);
+    p.setPen(Qt::white);
+    QString str = QString("Pitch:%1").arg(pitch,4, 'f', 1, '0');
+    p.drawText(0,fm.height(), str);
+    str = QString("Bank:%1").arg(bank,4, 'f', 1, '0');
+    p.drawText(0,2* fm.height(), str);
+
+    p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
+    p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
+    p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
+
+    int count = 6;
+
+    for(auto& line:_messageList)
+    {
+        p.drawText(0, count++* fm.height(), line);
+    }
+
+    p.drawImage(5, count * fm.height(), _mainObbImg);
+
+
     const auto& meshes = _scene->getMeshes();
+
+    p.beginNativePainting();
+
+    glEnable(GL_DEPTH_TEST);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    _shaderProgram.use();
+
+    _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
+    _pipeline.loadIdentity();
+    _pipeline.translate(0,0, -5.5);
+
+    _pipeline.matrixMode(matrixModes::VIEW_MATRIX);
+    _pipeline.loadIdentity();
+
+    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "lightPos"), 0, 1, 2 );
+
+    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "cameraPosition"),
+                cam.getLocation().x,cam.getLocation().y,cam.getLocation().z);
 
     for( const auto& mesh: meshes)
     {
