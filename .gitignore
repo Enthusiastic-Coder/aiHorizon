@@ -10,3 +10,4 @@ scripts/extra.obb
 android/extra/src/main/assets/extra.obb
 scripts/main.obb.bak
 scripts/patch.obb.bak
+build/
