@@ -20,23 +20,6 @@
 
 #include <jibbs/android/assetpack.h>
 
-QString checkAndAccessObbFiles(const QString &packName, const QString &assetName) {
-
-#ifdef Q_OS_ANDROID
-    QString mainPackPath = getAssetLocation(packName, assetName).path;
-
-    if (mainPackPath.isEmpty()) {
-        return "Assets from mainpack not found!";
-    } else {
-        return mainPackPath;
-        // Access files in mainPackPath
-    }
-#else
-    return QString("%1:%2").arg(packName, assetName);
-#endif
-}
-
-
 
 camera cam(vector3d(-3,10,25));
 
@@ -45,31 +28,40 @@ OpenGLWindow::OpenGLWindow()
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
-    _messageList << "main:" + checkAndAccessObbFiles("main","place_here.txt").right(40);
-    _messageList << "path:"+ checkAndAccessObbFiles("patch","patch.obb").right(40);
-    _messageList << "extra:"+ checkAndAccessObbFiles("extra","extra.obb").right(40);
 
+    std::vector<QString> files = {
+                                  "main",
+                                  "patch",
+                                  "extra",
+                                  };
+
+    AssetPack assetPack("com/enthusiasticcoder/aihorizon");
+
+    for(const QString &file : files)
+    {
+        QString pack;
+        QString filename;
 #ifdef Q_OS_ANDROID
-    _mainObbData = getDataFromAsset("main","main.obb");
-    _patchObbData = getDataFromAsset("patch","patch.obb");
-    _extraObbData = getDataFromAsset("extra","extra.obb");
+        pack = file;
 #else
-    _mainObbData = getDataFromAsset("", "scripts/main.obb");
-    _patchObbData = getDataFromAsset("", "scripts/patch.obb");
-    _extraObbData = getDataFromAsset("", "scripts/extra.obb");
+        pack = "scripts";
 #endif
+        filename = file + ".obb";
+        _obbByteArrays[file] = assetPack.getDataFromAsset(pack, filename);
 
-    _messageList << QString("Null:%1").arg(_mainObbData.isNull()?"Yes":"No");
-    _messageList << QString("Null:%1").arg(_patchObbData.isNull()?"Yes":"No");
-    _messageList << QString("Null:%1").arg(_extraObbData.isNull()?"Yes":"No");
+        _messageList << QString("%1-%2").arg(file).arg( _obbByteArrays[file].isNull() ? "Null": "LoadedOK");
+
+        AssetLocation loc = assetPack.getAssetLocation(pack, filename);
+        if( !loc.path.isEmpty())
+            _messageList << QString("%1->%2").arg(file, loc.path.right(40));
+    }
 
     auto registerResource = [](QByteArray data, QString prefix="") {
-        QResource::registerResource(reinterpret_cast<const uchar*>(data.constData()), prefix);
+        return QResource::registerResource(reinterpret_cast<const uchar*>(data.constData()), prefix);
     };
 
-    registerResource(_mainObbData);
-    registerResource(_patchObbData);
-    registerResource(_extraObbData,"/hello");
+    for(const auto& resource: _obbByteArrays)
+        registerResource(resource.second, resource.first=="extra"? "/hello":"");
 
     {
         QFile osmFile(":/osmtiles/osm/7/64_42.png");
