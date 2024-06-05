@@ -49,7 +49,7 @@ OpenGLWindow::OpenGLWindow()
         filename = file + ".obb";
         _obbByteArrays[file] = assetPack.getDataFromAsset(pack, filename);
 
-        _messageList << QString("%1-%2").arg(file).arg( _obbByteArrays[file].isNull() ? "Null": "LoadedOK");
+        _messageList << QString("%1-%2").arg(file, _obbByteArrays[file].isNull() ? "Null": "LoadedOK");
 
         AssetLocation loc = assetPack.getAssetLocation(pack, filename);
         if( !loc.path.isEmpty())
