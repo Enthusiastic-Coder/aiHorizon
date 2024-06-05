@@ -13,6 +13,12 @@ QTopWindow::QTopWindow(QWidget *parent)
     _openglWindow = new OpenGLWindow;
 
     setCentralWidget(_openglWindow);
+
+    connect( ui->actionPrivacy_Policy, &QAction::triggered, this, [this](bool checked) {
+
+        int o;
+        o = 3;
+    });
 }
 
 QTopWindow::~QTopWindow()
