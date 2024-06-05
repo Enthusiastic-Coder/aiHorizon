@@ -15,3 +15,13 @@ HEADERS += \
     matrices.h \
     $$PWD/openglcontextTest.h
 
+
+
+FORMS += \
+    MainWindow.ui
+
+HEADERS += \
+    QTopWindow.h
+
+SOURCES += \
+    QTopWindow.cpp

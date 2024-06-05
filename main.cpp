@@ -1,6 +1,8 @@
-#include <QGuiApplication>
+#include <QApplication>
 
-#include "openglwindow.h"
+#include "QTopWindow.h"
+#include <QSurfaceFormat>
+
 #include <QSize>
 #include <QScreen>
 
@@ -15,17 +17,15 @@ int main(int argc, char *argv[])
 #ifdef Q_OS_WIN
     SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 #endif
-//    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-//    QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
     QSurfaceFormat fmt;
     fmt.setDepthBufferSize(24);
     fmt.setAlphaBufferSize(8);
     fmt.setStencilBufferSize(8);
     QSurfaceFormat::setDefaultFormat(fmt);
 
-    QGuiApplication a(argc, argv);
+    QApplication a(argc, argv);
 
-    OpenGLWindow window;
+    QTopWindow window;
 #ifndef ANDROID
     QSize size = QGuiApplication::screens()[0]->availableSize();
     QSize newSize(size.width()*0.8, size.height()*0.8);

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sensors opengl
+QT       += core gui sensors opengl openglwidgets
 
 
 #need to reemove

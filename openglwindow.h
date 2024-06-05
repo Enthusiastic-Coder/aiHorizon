@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include "matrices.h"
 
-#include <QOpenGLWindow>
+#include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QBasicTimer>
 #include <QTimer>
 #include <QOpenGLShaderProgram>
@@ -24,11 +24,11 @@ class meshLoader;
 
 #include <QOpenGLFunctions>
 
-class OpenGLWindow : public QOpenGLWindow, private QOpenGLFunctions
+class OpenGLWindow : public QOpenGLWidget, private QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    OpenGLWindow();
+    explicit OpenGLWindow(QWidget* parent = nullptr);
     ~OpenGLWindow();
 
 protected:

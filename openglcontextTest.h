@@ -1,5 +1,5 @@
 #pragma once
 
-#include <QOpenGLWindow>
+class QOpenGLFunctions;
 
-void doTest(QOpenGLWindow* window);
+void doTest(QOpenGLFunctions* window);

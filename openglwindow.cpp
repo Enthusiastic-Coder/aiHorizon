@@ -24,7 +24,7 @@
 camera cam(vector3d(-3,10,25));
 
 
-OpenGLWindow::OpenGLWindow()
+OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
 {
     _bankHistory.resize(5);
     _pitchHistory.resize(_bankHistory.size());
@@ -112,7 +112,7 @@ void OpenGLWindow::initializeGL()
 
     const char* version = (const char*)glGetString(GL_VERSION);
 
-    doTest(this);
+    doTest(context()->functions());
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0,0,1,1);
@@ -126,8 +126,8 @@ void OpenGLWindow::initializeGL()
 
 void OpenGLWindow::paintGL()
 {
-    if(!isExposed())
-        return;
+    // if(!isExposed())
+    //     return;
 
     float bank=5.56f;
     float pitch=-12.56f;
@@ -271,7 +271,7 @@ void OpenGLWindow::paintGL()
 
 void OpenGLWindow::resizeGL(int w, int h)
 {
-    QOpenGLWindow::resizeGL(w, h);
+    QOpenGLWidget::resizeGL(w, h);
     _pipeline.perspective(75.0f, qreal(w) / qreal(h), 1.0f, 1000.f);
 }
 
@@ -280,7 +280,7 @@ void OpenGLWindow::keyPressEvent(QKeyEvent *e)
     if( e->key() == Qt::Key_Escape)
         close();
 
-    QOpenGLWindow::keyPressEvent(e);
+    QOpenGLWidget::keyPressEvent(e);
 }
 
 void OpenGLWindow::mousePressEvent(QMouseEvent *e)
