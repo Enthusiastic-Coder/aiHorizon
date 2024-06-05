@@ -4,6 +4,8 @@
 
 #include "./ui_MainWindow.h"
 
+#include <QMessageBox>
+
 
 QTopWindow::QTopWindow(QWidget *parent)
     : QMainWindow{parent} , ui(new Ui::MainWindow)
@@ -16,8 +18,7 @@ QTopWindow::QTopWindow(QWidget *parent)
 
     connect( ui->actionPrivacy_Policy, &QAction::triggered, this, [this](bool checked) {
 
-        int o;
-        o = 3;
+        QMessageBox::information(this, "Privacy Policy", "Please visit https://x.com/ADSBFlightTrkr/status/1798342984662196690");
     });
 }
 
