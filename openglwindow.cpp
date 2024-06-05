@@ -64,7 +64,7 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
         registerResource(resource.second, resource.first=="extra"? "/hello":"");
 
     {
-        QFile osmFile(":/osmtiles/osm/7/64_42.png");
+        QFile osmFile(":/images/adsbfl.png");
         if( osmFile.open(QIODevice::ReadOnly))
         {
             _mainObbImg = QImage::fromData(osmFile.readAll());
