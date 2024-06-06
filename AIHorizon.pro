@@ -24,17 +24,7 @@ INCLUDEPATH += glm
 include(sdk/jibbs.pri)
 include(assimp2/assimp.pri)
 
-#win32 {
-#    SOURCES += sdk/include/GLee.c
-#    HEADERS += sdk/include/GLee.h
-#}
-
 include(AIHorizon.pri)
-
-#win32 {
-#   LIBS += -l"opengl32"
-#}
-
 
 win32 {
 scripts.files += scripts/*.obb
