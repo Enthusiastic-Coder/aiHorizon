@@ -3,12 +3,5 @@ AIHorizon.pro.user.eb1e9f2.4.8-pre1
 AIHorizon.pro.user.4616524.4.9-pre1
 android/main/src/main/assets/main.obb
 android/patch/src/main/assets/patch.obb
-scripts/main.obb
-scripts/patch.obb
-scripts/extra.obb.bak
-scripts/extra.obb
 android/extra/src/main/assets/extra.obb
-scripts/main.obb.bak
-scripts/patch.obb.bak
-build/
 scripts/__obbs/
