@@ -18,7 +18,7 @@ QTopWindow::QTopWindow(QWidget *parent)
 
     connect( ui->actionPrivacy_Policy, &QAction::triggered, this, [this](bool checked) {
 
-        QMessageBox::information(this, "Privacy Policy", "Please visit https://x.com/ADSBFlightTrkr/status/1798674939975025010");
+        QMessageBox::information(this, "Privacy Policy", "Please visit https://enthusiastic-coder.github.io/aihorizon-privacy-policy/");
     });
 }
 
