@@ -27,7 +27,7 @@ include(assimp2/assimp.pri)
 include(AIHorizon.pri)
 
 win32 {
-scripts.files += scripts/*.obb
+scripts.files += scripts/__obbs/*.obb
 scripts.path = $$DEPLOY_DIR/scripts
 INSTALLS += scripts
 }
