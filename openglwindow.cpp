@@ -284,6 +284,18 @@ void OpenGLWindow::keyPressEvent(QKeyEvent *e)
     if( e->key() == Qt::Key_Escape)
         close();
 
+    if( e->key() == Qt::Key_Left)
+        _bank+=5;
+
+    if( e->key() == Qt::Key_Right)
+        _bank-=5;
+
+    if( e->key() == Qt::Key_Up)
+        _pitch +=5;
+
+    if( e->key() == Qt::Key_Down)
+        _pitch -=5;
+
     QOpenGLWidget::keyPressEvent(e);
 }
 

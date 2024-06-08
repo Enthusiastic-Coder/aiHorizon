@@ -16,6 +16,8 @@ QTopWindow::QTopWindow(QWidget *parent)
 
     setCentralWidget(_openglWindow);
 
+    _openglWindow->setFocus();
+
     connect( ui->actionPrivacy_Policy, &QAction::triggered, this, [this](bool checked) {
 
         Q_UNUSED(checked)
