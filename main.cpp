@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
 
     QTopWindow window;
 #ifndef ANDROID
-    QSize size = QGuiApplication::screens()[0]->availableSize();
+    const QList<QScreen *>& screens = QGuiApplication::screens();
+    QSize size = screens.at(0)->availableSize();
     QSize newSize(size.width()*0.8, size.height()*0.8);
     window.resize(newSize);
 #endif
