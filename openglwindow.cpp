@@ -120,7 +120,7 @@ void OpenGLWindow::initializeGL()
     _timer.start(100);
     _accelerometer.setActive(true);
     _orientation.setActive(true);
-
+    _rotationSensor.setActive(true);
 
 }
 
@@ -129,13 +129,8 @@ void OpenGLWindow::paintGL()
     // if(!isExposed())
     //     return;
 
-    float bank=5.56f;
-    float pitch=-12.56f;
-
     QAccelerometerReading* reading = _accelerometer.reading();
     QOrientationReading* o = _orientation.reading();
-
-
     if( reading && o)
     {
         qreal x, y, z;
@@ -159,29 +154,28 @@ void OpenGLWindow::paintGL()
             z = reading->z();
         }
 
-        bank = atan2(x,y) / 3.1415 * 180;
-        pitch = atan2(z,y) / 3.1415 * 180;
+        _bank = atan2(x,y) / 3.1415 * 180;
+        _pitch = atan2(z,y) / 3.1415 * 180;
     }
 
     if( _bankHistoryIdx == _bankHistory.size())
         _bankHistoryIdx = 0;
 
-    _pitchHistory[_bankHistoryIdx] = pitch;
-    _bankHistory[_bankHistoryIdx++] = bank;
+    _pitchHistory[_bankHistoryIdx] = _pitch;
+    _bankHistory[_bankHistoryIdx++] = _bank;
 
-    bank = 0.0f;
+    _bank = 0.0f;
 
     for(auto value:_bankHistory)
-        bank += value;
+        _bank += value;
 
-    bank /= _bankHistory.size();
+    _bank /= _bankHistory.size();
 
-    pitch = 0.0f;
+    _pitch = 0.0f;
     for(auto value:_pitchHistory)
-        pitch += value;
+        _pitch += value;
 
-    pitch /= _pitchHistory.size();
-
+    _pitch /= _pitchHistory.size();
 
     QPainter p(this);
     p.fillRect(QRect{0,0,width(), height()}, Qt::blue);
@@ -189,24 +183,34 @@ void OpenGLWindow::paintGL()
     QFontMetrics fm(font);
     p.setFont(font);
     p.setPen(Qt::white);
-    QString str = QString("Pitch:%1").arg(pitch,4, 'f', 1, '0');
-    p.drawText(0,fm.height(), str);
-    str = QString("Bank:%1").arg(bank,4, 'f', 1, '0');
-    p.drawText(0,2* fm.height(), str);
 
-    p.drawText(0, 3* fm.height(), "currentPath : " + QDir::currentPath());
-    p.drawText(0, 4* fm.height(), "homePath : " + QDir::homePath());
-    p.drawText(0, 5* fm.height(), "applicationDirPath : " + QCoreApplication::applicationDirPath());
+    int count = 1;
+    QStringList messageList;
 
-    int count = 6;
+    QString str = QString("Pitch:%1").arg(_pitch,4, 'f', 1, '0');
+    messageList << str;
 
-    for(auto& line:_messageList)
+    str = QString("Bank:%1").arg(_bank,4, 'f', 1, '0');
+    messageList << str;
+
+    QRotationReading *rotReading = _rotationSensor.reading();
+
+    if(rotReading)
     {
-        p.drawText(0, count++* fm.height(), line);
+        messageList << QString("Rot:{%1, %2, %3}").arg(rotReading->x(), rotReading->y(), rotReading->z());
     }
 
-    p.drawImage(5, count * fm.height(), _mainObbImg);
+    auto displayMsg = [&count,&p,&fm](const auto& msgList) {
+        for(auto& line:msgList)
+        {
+            p.drawText(0, count++* fm.height(), line);
+        }
+    };
 
+    displayMsg(messageList);
+    displayMsg(_messageList);
+
+    p.drawImage(5, count * fm.height(), _mainObbImg);
 
     const auto& meshes = _scene->getMeshes();
 
@@ -246,17 +250,17 @@ void OpenGLWindow::paintGL()
 
         if( mesh->name() == "secondary_ai_color_Disk")
         {
-            _pipeline.rotateZ(-int(bank));
+            _pipeline.rotateZ(-int(_bank));
 #ifdef ANDROID
             _pipeline.translate(0, (pitch-20)/20,0);;
 #else
-            _pipeline.translate(0, pitch/20,0);
+            _pipeline.translate(0, _pitch/20,0);
 #endif
         }
 
         if( mesh->name() == "secondary_ai_color_Housing__Orange")
         {
-            _pipeline.rotateZ(-int(bank));
+            _pipeline.rotateZ(-int(_bank));
         }
 
         _pipeline.updateMatrices(_shaderProgram.getProgramID());

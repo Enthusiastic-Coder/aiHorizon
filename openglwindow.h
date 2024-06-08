@@ -18,6 +18,7 @@
 #include <QAccelerometerReading>
 #include <QOrientationSensor>
 #include <QOrientationReading>
+#include <QRotationSensor>
 
 class shader;
 class meshLoader;
@@ -57,9 +58,13 @@ private:
     QAccelerometer _accelerometer;
     QOrientationSensor _orientation;
 
+    QRotationSensor _rotationSensor;
+
     QImage _mainObbImg;
     std::unordered_map<QString, QByteArray> _obbByteArrays;
 
+    float _bank=5.56f;
+    float _pitch=-12.56f;
     std::vector<float> _bankHistory;
     std::vector<float> _pitchHistory;
     int _bankHistoryIdx = 0;
