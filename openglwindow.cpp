@@ -252,7 +252,7 @@ void OpenGLWindow::paintGL()
         {
             _pipeline.rotateZ(-int(_bank));
 #ifdef ANDROID
-            _pipeline.translate(0, (pitch-20)/20,0);;
+            _pipeline.translate(0, (_pitch-20)/20,0);;
 #else
             _pipeline.translate(0, _pitch/20,0);
 #endif
