@@ -20,6 +20,9 @@
 #include <QOrientationReading>
 #include <QRotationSensor>
 #include <QPressureSensor>
+#include <QGyroscope>
+#include <QCompass>
+#include <QMagnetometer>
 
 class shader;
 class meshLoader;
@@ -62,6 +65,9 @@ private:
     QRotationSensor _rotationSensor;
 
     QPressureSensor _pressureSensor;
+    QGyroscope _gyroSensor;
+    QCompass _compassSensor;
+    QMagnetometer _magnoSensor;
 
     QImage _mainObbImg;
     std::unordered_map<QString, QByteArray> _obbByteArrays;

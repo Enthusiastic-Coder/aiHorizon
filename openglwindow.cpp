@@ -122,6 +122,9 @@ void OpenGLWindow::initializeGL()
     _orientation.setActive(true);
     _rotationSensor.setActive(true);
     _pressureSensor.setActive(true);
+    _gyroSensor.setActive(true);
+    _compassSensor.setActive(true);
+    _magnoSensor.setActive(true);
 
 }
 
@@ -207,6 +210,29 @@ void OpenGLWindow::paintGL()
     {
         messageList << QString("Pressure:{%1}").arg(pressureReading->pressure());
         messageList << QString("Temp:{%1}").arg(pressureReading->temperature());
+    }
+
+    QGyroscopeReading *gyroReading = _gyroSensor.reading();
+
+    if( gyroReading)
+    {
+        messageList << QString("Gyro:{%1, %2, %3}").arg(gyroReading->x()).arg(gyroReading->y()).arg(gyroReading->z());
+    }
+
+    QCompassReading *compassReading = _compassSensor.reading();
+
+    if( compassReading)
+    {
+        messageList << QString("Compass_Azimuth:{%1}").arg(compassReading->azimuth());
+        messageList << QString("Compass_Calib:{%1}").arg(compassReading->calibrationLevel());
+    }
+
+    QMagnetometerReading* magnoReading = _magnoSensor.reading();
+
+    if( magnoReading)
+    {
+        messageList << QString("Mag:{%1, %2, %3}").arg(magnoReading->x()).arg(magnoReading->y()).arg(magnoReading->z());
+        messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
     }
 
     auto displayMsg = [&count,&p,&fm](const auto& msgList) {
