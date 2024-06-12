@@ -197,7 +197,7 @@ void OpenGLWindow::paintGL()
 
     if(rotReading)
     {
-        messageList << QString("Rot:{%1, %2, %3}").arg(rotReading->x(), rotReading->y(), rotReading->z());
+        messageList << QString("Rot:{%1, %2, %3}").arg(rotReading->x()).arg(rotReading->y()).arg(rotReading->z());
     }
 
     auto displayMsg = [&count,&p,&fm](const auto& msgList) {
