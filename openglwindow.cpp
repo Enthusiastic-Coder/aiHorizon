@@ -181,8 +181,64 @@ void OpenGLWindow::paintGL()
 
     _pitch /= _pitchHistory.size();
 
+    const auto& meshes = _scene->getMeshes();
+
+    glEnable(GL_DEPTH_TEST);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    _shaderProgram.use();
+
+    _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
+    _pipeline.loadIdentity();
+    _pipeline.translate(0,0, -5.5);
+
+    _pipeline.matrixMode(matrixModes::VIEW_MATRIX);
+    _pipeline.loadIdentity();
+
+    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "lightPos"), 0, 1, 2 );
+
+    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "cameraPosition"),
+                cam.getLocation().x,cam.getLocation().y,cam.getLocation().z);
+
+    for( const auto& mesh: meshes)
+    {
+        _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
+        _pipeline.loadIdentity();
+
+        if(o &&
+                (o->orientation() == QOrientationReading::TopUp
+                 || o->orientation() == QOrientationReading::FaceUp
+                 || o->orientation() == QOrientationReading::FaceDown)
+            )
+            _pipeline.translate(0,0, -9.0);
+        else
+            _pipeline.translate(0,0, -5.5);
+
+        if( mesh->name() == "secondary_ai_color_Disk")
+        {
+            _pipeline.rotateZ(-int(_bank));
+#ifdef ANDROID
+            _pipeline.translate(0, (_pitch-20)/20,0);;
+#else
+            _pipeline.translate(0, _pitch/20,0);
+#endif
+        }
+
+        if( mesh->name() == "secondary_ai_color_Housing__Orange")
+        {
+            _pipeline.rotateZ(-int(_bank));
+        }
+
+        _pipeline.updateMatrices(_shaderProgram.getProgramID());
+
+        mesh.draw(_shaderProgram);
+    }
+
+    _shaderProgram.useDefault();
+
     QPainter p(this);
-    p.fillRect(QRect{0,0,width(), height()}, Qt::blue);
+    // p.fillRect(QRect{0,0,width(), height()}, Qt::blue);
     QFont font("Verdana", 14);
     QFontMetrics fm(font);
     p.setFont(font);
@@ -245,67 +301,8 @@ void OpenGLWindow::paintGL()
     displayMsg(messageList);
     displayMsg(_messageList);
 
-    p.drawImage(5, count * fm.height(), _mainObbImg);
+    //p.drawImage(5, count * fm.height(), _mainObbImg);
 
-    const auto& meshes = _scene->getMeshes();
-
-    p.beginNativePainting();
-
-    glEnable(GL_DEPTH_TEST);
-
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    _shaderProgram.use();
-
-    _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
-    _pipeline.loadIdentity();
-    _pipeline.translate(0,0, -5.5);
-
-    _pipeline.matrixMode(matrixModes::VIEW_MATRIX);
-    _pipeline.loadIdentity();
-
-    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "lightPos"), 0, 1, 2 );
-
-    glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "cameraPosition"),
-                cam.getLocation().x,cam.getLocation().y,cam.getLocation().z);
-
-    for( const auto& mesh: meshes)
-    {
-        _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
-        _pipeline.loadIdentity();
-
-        if(o &&
-                (o->orientation() == QOrientationReading::TopUp
-                 || o->orientation() == QOrientationReading::FaceUp
-                 || o->orientation() == QOrientationReading::FaceDown)
-            )
-            _pipeline.translate(0,0, -9.0);
-        else
-            _pipeline.translate(0,0, -5.5);
-
-        if( mesh->name() == "secondary_ai_color_Disk")
-        {
-            _pipeline.rotateZ(-int(_bank));
-#ifdef ANDROID
-            _pipeline.translate(0, (_pitch-20)/20,0);;
-#else
-            _pipeline.translate(0, _pitch/20,0);
-#endif
-        }
-
-        if( mesh->name() == "secondary_ai_color_Housing__Orange")
-        {
-            _pipeline.rotateZ(-int(_bank));
-        }
-
-        _pipeline.updateMatrices(_shaderProgram.getProgramID());
-
-        mesh.draw(_shaderProgram);
-    }
-
-    _shaderProgram.useDefault();
-
-    p.endNativePainting();
 }
 
 void OpenGLWindow::resizeGL(int w, int h)
