@@ -121,6 +121,7 @@ void OpenGLWindow::initializeGL()
     _accelerometer.setActive(true);
     _orientation.setActive(true);
     _rotationSensor.setActive(true);
+    _pressureSensor.setActive(true);
 
 }
 
@@ -198,6 +199,14 @@ void OpenGLWindow::paintGL()
     if(rotReading)
     {
         messageList << QString("Rot:{%1, %2, %3}").arg(rotReading->x()).arg(rotReading->y()).arg(rotReading->z());
+    }
+
+    QPressureReading *pressureReading = _pressureSensor.reading();
+
+    if(pressureReading)
+    {
+        messageList << QString("Pressure:{%1}").arg(pressureReading->pressure());
+        messageList << QString("Temp:{%1}").arg(pressureReading->temperature());
     }
 
     auto displayMsg = [&count,&p,&fm](const auto& msgList) {

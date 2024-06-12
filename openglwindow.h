@@ -19,6 +19,7 @@
 #include <QOrientationSensor>
 #include <QOrientationReading>
 #include <QRotationSensor>
+#include <QPressureSensor>
 
 class shader;
 class meshLoader;
@@ -59,6 +60,8 @@ private:
     QOrientationSensor _orientation;
 
     QRotationSensor _rotationSensor;
+
+    QPressureSensor _pressureSensor;
 
     QImage _mainObbImg;
     std::unordered_map<QString, QByteArray> _obbByteArrays;
