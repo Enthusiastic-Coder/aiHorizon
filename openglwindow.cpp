@@ -314,9 +314,9 @@ void OpenGLWindow::paintGL()
         messageList << QString("Mag:{%1, %2, %3}").arg(magnoReading->x()).arg(magnoReading->y()).arg(magnoReading->z());
         messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
 
-        mx = gyroReading->x();
-        my = gyroReading->y();
-        mz = gyroReading->z();
+        mx = magnoReading->x();
+        my = magnoReading->y();
+        mz = magnoReading->z();
     }
 
     qint64 currentTime = _elapsedTimer.elapsed();
