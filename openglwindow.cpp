@@ -304,10 +304,12 @@ void OpenGLWindow::paintGL()
     }
 
     qint64 currentTime = _elapsedTimer.elapsed();
+    double dt = (currentTime - _lastTime)/1000.0; // elapsed time in milliseconds
+
+    messageList << QString("Dt:{%1}").arg(dt);
 
     if( _lastTime != 0)
     {
-        double dt = currentTime - _lastTime; // elapsed time in milliseconds
         QAccelerometerReading* accReading = _accelerometer.reading();
         QGyroscopeReading* gyroReading = _gyroSensor.reading();
         QMagnetometerReading* magReading = _magnoSensor.reading();
