@@ -336,18 +336,14 @@ void OpenGLWindow::paintGL()
             my = magReading->y();
             mz = magReading->z();
 
-            bool nanFound{false};
-
             for(int i=0; i <9; ++i)
             {
-                bool currentNan = std::isnan(*pts[i]);
-                nanFound |= currentNan;
+                _hasNan[i] |= std::isnan(*pts[i]);
 
-                messageList << QString("nan->{%1}->{%2}").arg(i).arg(currentNan?"BAD":"ok");
+                messageList << QString("nan->{%1}->{%2}").arg(i).arg(_hasNan[i]?"BAD":"ok");
             }
 
-            if( !nanFound)
-                madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
+            madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
 
             messageList << QString("Magwick{%1, %2, %3}")
                                .arg(madgwick.getPitch())
