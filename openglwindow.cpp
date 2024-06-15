@@ -316,9 +316,13 @@ void OpenGLWindow::paintGL()
 
         if (accReading && gyroReading && magReading)
         {
-            qreal ax ={}, ay={}, az={};
-            qreal mx ={}, my={}, mz={};
-            qreal gx ={}, gy={}, gz={};
+            qreal ax, ay, az;
+            qreal mx, my, mz;
+            qreal gx, gy, gz;
+
+            qreal* pts[]= {&ax, &ay, &az,
+                            &mx, &my, &mz,
+                            &gx, &gy, &gz};
 
             ax = accReading->x();
             ay = accReading->y();
@@ -332,7 +336,18 @@ void OpenGLWindow::paintGL()
             my = magReading->y();
             mz = magReading->z();
 
-            madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
+            bool nanFound{false};
+
+            for(int i=0; i <9; ++i)
+            {
+                bool currentNan = std::isnan(*pts[i]);
+                nanFound |= currentNan;
+
+                messageList << QString("nan->{%1}->{%2}").arg(i).arg(currentNan?"BAD":"ok");
+            }
+
+            if( !nanFound)
+                madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
 
             messageList << QString("Magwick{%1, %2, %3}")
                                .arg(madgwick.getPitch())
