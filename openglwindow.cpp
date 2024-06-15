@@ -49,9 +49,10 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
         filename = file + ".obb";
         _obbByteArrays[file] = assetPack.getDataFromAsset(pack, filename);
 
-#ifdef __RESOURCES__CHECK__
-        _messageList << QString("%1-%2").arg(file, _obbByteArrays[file].isNull() ? "Null": "LoadedOK");
-#endif
+        if(_obbByteArrays[file].isNull())
+        {
+            _messageList << QString("%1-%2").arg(file, "Null");
+        }
 
         AssetLocation loc = assetPack.getAssetLocation(pack, filename);
         if( !loc.path.isEmpty())
