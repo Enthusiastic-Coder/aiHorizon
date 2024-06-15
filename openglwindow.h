@@ -72,7 +72,7 @@ private:
     QMagnetometer _magnoSensor;
 
     QElapsedTimer _elapsedTimer;
-    qint64 _lastTime;
+    qint64 _lastTime = {};
 
     QImage _mainObbImg;
     std::unordered_map<QString, QByteArray> _obbByteArrays;

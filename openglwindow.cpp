@@ -305,10 +305,9 @@ void OpenGLWindow::paintGL()
 
     qint64 currentTime = _elapsedTimer.elapsed();
 
-    double dt = currentTime - _lastTime; // elapsed time in milliseconds
-    _lastTime = currentTime;
-
+    if( _lastTime != 0)
     {
+        double dt = currentTime - _lastTime; // elapsed time in milliseconds
         QAccelerometerReading* accReading = _accelerometer.reading();
         QGyroscopeReading* gyroReading = _gyroSensor.reading();
         QMagnetometerReading* magReading = _magnoSensor.reading();
@@ -339,6 +338,8 @@ void OpenGLWindow::paintGL()
                                .arg(madgwick.getRoll());
         }
     }
+
+     _lastTime = currentTime;
 
     auto displayMsg = [&count,&p,&fm](const auto& msgList) {
         for(auto& line:msgList)
