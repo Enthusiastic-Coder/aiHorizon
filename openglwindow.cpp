@@ -56,9 +56,11 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
             _messageList << QString("%1-%2").arg(file, "Null");
         }
 
+#ifdef __RESOURCES__CHECK__
         AssetLocation loc = assetPack.getAssetLocation(pack, filename);
         if( !loc.path.isEmpty())
             _messageList << QString("%1->%2").arg(file, loc.path.right(40));
+#endif
     }
 
     auto registerResource = [](QByteArray data, QString prefix="") {
