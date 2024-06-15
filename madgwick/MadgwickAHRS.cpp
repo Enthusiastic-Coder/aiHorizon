@@ -25,7 +25,6 @@
 //-------------------------------------------------------------------------------------------
 // Definitions
 
-#define sampleFreqDef   512.0f          // sample frequency in Hz
 #define betaDef         0.1f            // 2 * proportional gain
 
 
@@ -41,11 +40,10 @@ Madgwick::Madgwick() {
 	q1 = 0.0f;
 	q2 = 0.0f;
 	q3 = 0.0f;
-	invSampleFreq = 1.0f / sampleFreqDef;
 	anglesComputed = 0;
 }
 
-void Madgwick::update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz) {
+void Madgwick::update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz, float dt) {
 	float recipNorm;
 	float s0, s1, s2, s3;
 	float qDot1, qDot2, qDot3, qDot4;
@@ -54,7 +52,7 @@ void Madgwick::update(float gx, float gy, float gz, float ax, float ay, float az
 
 	// Use IMU algorithm if magnetometer measurement invalid (avoids NaN in magnetometer normalisation)
 	if((mx == 0.0f) && (my == 0.0f) && (mz == 0.0f)) {
-		updateIMU(gx, gy, gz, ax, ay, az);
+        updateIMU(gx, gy, gz, ax, ay, az, dt);
 		return;
 	}
 
@@ -133,10 +131,10 @@ void Madgwick::update(float gx, float gy, float gz, float ax, float ay, float az
 	}
 
 	// Integrate rate of change of quaternion to yield quaternion
-	q0 += qDot1 * invSampleFreq;
-	q1 += qDot2 * invSampleFreq;
-	q2 += qDot3 * invSampleFreq;
-	q3 += qDot4 * invSampleFreq;
+    q0 += qDot1 * dt;
+    q1 += qDot2 * dt;
+    q2 += qDot3 * dt;
+    q3 += qDot4 * dt;
 
 	// Normalise quaternion
 	recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
@@ -150,7 +148,7 @@ void Madgwick::update(float gx, float gy, float gz, float ax, float ay, float az
 //-------------------------------------------------------------------------------------------
 // IMU algorithm update
 
-void Madgwick::updateIMU(float gx, float gy, float gz, float ax, float ay, float az) {
+void Madgwick::updateIMU(float gx, float gy, float gz, float ax, float ay, float az, float dt) {
 	float recipNorm;
 	float s0, s1, s2, s3;
 	float qDot1, qDot2, qDot3, qDot4;
@@ -210,10 +208,10 @@ void Madgwick::updateIMU(float gx, float gy, float gz, float ax, float ay, float
 	}
 
 	// Integrate rate of change of quaternion to yield quaternion
-	q0 += qDot1 * invSampleFreq;
-	q1 += qDot2 * invSampleFreq;
-	q2 += qDot3 * invSampleFreq;
-	q3 += qDot4 * invSampleFreq;
+    q0 += qDot1 * dt;
+    q1 += qDot2 * dt;
+    q2 += qDot3 * dt;
+    q3 += qDot4 * dt;
 
 	// Normalise quaternion
 	recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);

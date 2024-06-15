@@ -305,7 +305,7 @@ void OpenGLWindow::paintGL()
 
     qint64 currentTime = _elapsedTimer.elapsed();
 
-    double dt = (currentTime - _lastTime) / 1000.0; // elapsed time in milliseconds
+    double dt = currentTime - _lastTime; // elapsed time in milliseconds
     _lastTime = currentTime;
 
     {
@@ -331,7 +331,7 @@ void OpenGLWindow::paintGL()
             my = magReading->y();
             mz = magReading->z();
 
-            madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz);
+            madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
 
             messageList << QString("Magwick{%1, %2, %3}")
                                .arg(madgwick.getPitch())
