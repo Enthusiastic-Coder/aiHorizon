@@ -49,7 +49,9 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
         filename = file + ".obb";
         _obbByteArrays[file] = assetPack.getDataFromAsset(pack, filename);
 
+#ifdef __RESOURCES__CHECK__
         _messageList << QString("%1-%2").arg(file, _obbByteArrays[file].isNull() ? "Null": "LoadedOK");
+#endif
 
         AssetLocation loc = assetPack.getAssetLocation(pack, filename);
         if( !loc.path.isEmpty())
@@ -63,6 +65,7 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
     for(const auto& resource: _obbByteArrays)
         registerResource(resource.second, resource.first=="extra"? "/hello":"");
 
+#ifdef __RESOURCES__CHECK__
     {
         QFile osmFile(":/images/adsbfl.png");
         if( osmFile.open(QIODevice::ReadOnly))
@@ -92,6 +95,7 @@ OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
         else
             _messageList << "mainCpp NOT FOUND";
     }
+#endif
 }
 
 OpenGLWindow::~OpenGLWindow()
