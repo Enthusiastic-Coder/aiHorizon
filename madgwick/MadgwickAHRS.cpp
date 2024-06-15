@@ -20,7 +20,9 @@
 // Header files
 
 #include "MadgwickAHRS.h"
+#include <cmath>
 #include <math.h>
+#include <limits>
 
 //-------------------------------------------------------------------------------------------
 // Definitions
@@ -227,14 +229,20 @@ void Madgwick::updateIMU(float gx, float gy, float gz, float ax, float ay, float
 // See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
 
 float Madgwick::invSqrt(float x) {
-	float halfx = 0.5f * x;
-	float y = x;
-	long i = *(long*)&y;
-	i = 0x5f3759df - (i>>1);
-	y = *(float*)&i;
-	y = y * (1.5f - (halfx * y * y));
-	y = y * (1.5f - (halfx * y * y));
-	return y;
+    // float halfx = 0.5f * x;
+    // float y = x;
+    // long i = *(long*)&y;
+    // i = 0x5f3759df - (i>>1);
+    // y = *(float*)&i;
+    // y = y * (1.5f - (halfx * y * y));
+    // y = y * (1.5f - (halfx * y * y));
+    // return y;
+    float sqVal = std::sqrt(x);
+
+    if( sqVal <= std::numeric_limits<float>::epsilon())
+        return 0.0f;
+
+    return 1.0/sqVal;
 }
 
 //-------------------------------------------------------------------------------------------
