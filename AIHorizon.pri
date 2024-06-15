@@ -21,7 +21,9 @@ FORMS += \
     MainWindow.ui
 
 HEADERS += \
-    QTopWindow.h
+    QTopWindow.h \
+    madgwick\MadgwickAHRS.h
 
 SOURCES += \
-    QTopWindow.cpp
+    QTopWindow.cpp \
+    madgwick\MadgwickAHRS.cpp
