@@ -144,10 +144,6 @@ void OpenGLWindow::paintGL()
     // if(!isExposed())
     //     return;
 
-    qreal ax ={}, ay={}, az={};
-    qreal mx ={}, my={}, mz={};
-    qreal gx ={}, gy={}, gz={};
-
     QAccelerometerReading* accReading = _accelerometer.reading();
     QOrientationReading* o = _orientation.reading();
 
@@ -173,10 +169,6 @@ void OpenGLWindow::paintGL()
             y = accReading->y();
             z = accReading->z();
         }
-
-        ax = accReading->x();
-        ay = accReading->y();
-        az = accReading->z();
 
         _bank = atan2(x,y) / 3.1415 * 180;
         _pitch = atan2(z,y) / 3.1415 * 180;
@@ -293,10 +285,6 @@ void OpenGLWindow::paintGL()
     if( gyroReading)
     {
         messageList << QString("Gyro:{%1, %2, %3}").arg(gyroReading->x()).arg(gyroReading->y()).arg(gyroReading->z());
-
-        gx = gyroReading->x();
-        gy = gyroReading->y();
-        gz = gyroReading->z();
     }
 
     QCompassReading *compassReading = _compassSensor.reading();
@@ -313,10 +301,6 @@ void OpenGLWindow::paintGL()
     {
         messageList << QString("Mag:{%1, %2, %3}").arg(magnoReading->x()).arg(magnoReading->y()).arg(magnoReading->z());
         messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
-
-        mx = magnoReading->x();
-        my = magnoReading->y();
-        mz = magnoReading->z();
     }
 
     qint64 currentTime = _elapsedTimer.elapsed();
@@ -324,12 +308,37 @@ void OpenGLWindow::paintGL()
     double dt = (currentTime - _lastTime) / 1000.0; // elapsed time in milliseconds
     _lastTime = currentTime;
 
-    madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz);
+    {
+        QAccelerometerReading* accReading = _accelerometer.reading();
+        QGyroscopeReading* gyroReading = _gyroSensor.reading();
+        QMagnetometerReading* magReading = _magnoSensor.reading();
 
-    messageList << QString("Magwick{%1, %2, %3}")
-                       .arg(madgwick.getPitch())
-                       .arg(madgwick.getYaw())
-                       .arg(madgwick.getRoll());
+        if (accReading && gyroReading && magReading)
+        {
+            qreal ax ={}, ay={}, az={};
+            qreal mx ={}, my={}, mz={};
+            qreal gx ={}, gy={}, gz={};
+
+            ax = accReading->x();
+            ay = accReading->y();
+            az = accReading->z();
+
+            gx = gyroReading->x();
+            gy = gyroReading->y();
+            gz = gyroReading->z();
+
+            mx = magReading->x();
+            my = magReading->y();
+            mz = magReading->z();
+
+            madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz);
+
+            messageList << QString("Magwick{%1, %2, %3}")
+                               .arg(madgwick.getPitch())
+                               .arg(madgwick.getYaw())
+                               .arg(madgwick.getRoll());
+        }
+    }
 
     auto displayMsg = [&count,&p,&fm](const auto& msgList) {
         for(auto& line:msgList)
