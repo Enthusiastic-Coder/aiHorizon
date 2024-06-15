@@ -320,10 +320,6 @@ void OpenGLWindow::paintGL()
             qreal mx, my, mz;
             qreal gx, gy, gz;
 
-            qreal* pts[]= {&ax, &ay, &az,
-                            &mx, &my, &mz,
-                            &gx, &gy, &gz};
-
             ax = accReading->x();
             ay = accReading->y();
             az = accReading->z();
@@ -335,13 +331,6 @@ void OpenGLWindow::paintGL()
             mx = magReading->x();
             my = magReading->y();
             mz = magReading->z();
-
-            for(int i=0; i <9; ++i)
-            {
-                _hasNan[i] |= std::isnan(*pts[i]);
-
-                messageList << QString("nan->{%1}->{%2}").arg(i).arg(_hasNan[i]?"BAD":"ok");
-            }
 
             madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
 

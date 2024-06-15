@@ -73,9 +73,6 @@ private:
 
     QElapsedTimer _elapsedTimer;
     qint64 _lastTime = {};
-    bool _hasNan[9] = {false,false,false,
-                       false,false,false,
-                        false,false,false};
 
     QImage _mainObbImg;
     std::unordered_map<QString, QByteArray> _obbByteArrays;
