@@ -20,11 +20,7 @@
 
 #include <jibbs/android/assetpack.h>
 
-#include "madgwick/MadgwickAHRS.h"
-
-
 camera cam(vector3d(-3,10,25));
-Madgwick madgwick;
 
 OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
 {
@@ -307,39 +303,6 @@ void OpenGLWindow::paintGL()
     double dt = (currentTime - _lastTime)/1000.0; // elapsed time in milliseconds
 
     messageList << QString("Dt:{%1}").arg(dt);
-
-    if( _lastTime != 0)
-    {
-        QAccelerometerReading* accReading = _accelerometer.reading();
-        QGyroscopeReading* gyroReading = _gyroSensor.reading();
-        QMagnetometerReading* magReading = _magnoSensor.reading();
-
-        if (accReading && gyroReading && magReading)
-        {
-            qreal ax, ay, az;
-            qreal mx, my, mz;
-            qreal gx, gy, gz;
-
-            ax = accReading->x();
-            ay = accReading->y();
-            az = accReading->z();
-
-            gx = gyroReading->x();
-            gy = gyroReading->y();
-            gz = gyroReading->z();
-
-            mx = magReading->x();
-            my = magReading->y();
-            mz = magReading->z();
-
-            madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz, dt);
-
-            messageList << QString("Magwick{%1, %2, %3}")
-                               .arg(madgwick.getPitch())
-                               .arg(madgwick.getYaw())
-                               .arg(madgwick.getRoll());
-        }
-    }
 
      _lastTime = currentTime;
 
