@@ -140,34 +140,35 @@ void OpenGLWindow::paintGL()
     // if(!isExposed())
     //     return;
 
-    QAccelerometerReading* accReading = _accelerometer.reading();
-    QOrientationReading* o = _orientation.reading();
-
-    if( accReading && o)
+    QOrientationReading* orientationReading = _orientation.reading();
+    if( orientationReading )
     {
-        qreal x, y, z;
+        if(QAccelerometerReading* accReading = _accelerometer.reading())
+        {
+            qreal x, y, z;
 
-        if( o->orientation() == QOrientationReading::RightUp )
-        {
-            y = accReading->x();
-            x = -accReading->y();
-            z = accReading->z();
-        }
-        else if( o->orientation() == QOrientationReading::LeftUp )
-        {
-            y = -accReading->x();
-            x = accReading->y();
-            z = accReading->z();
-        }
-        else
-        {
-            x = accReading->x();
-            y = accReading->y();
-            z = accReading->z();
-        }
+            if( orientationReading->orientation() == QOrientationReading::RightUp )
+            {
+                y = accReading->x();
+                x = -accReading->y();
+                z = accReading->z();
+            }
+            else if( orientationReading->orientation() == QOrientationReading::LeftUp )
+            {
+                y = -accReading->x();
+                x = accReading->y();
+                z = accReading->z();
+            }
+            else
+            {
+                x = accReading->x();
+                y = accReading->y();
+                z = accReading->z();
+            }
 
-        _bank = atan2(x,y) / 3.1415 * 180;
-        _pitch = atan2(z,y) / 3.1415 * 180;
+            _bank = atan2(x,y) / 3.1415 * 180;
+            _pitch = atan2(z,y) / 3.1415 * 180;
+        }
     }
 
     if( _bankHistoryIdx == _bankHistory.size())
@@ -214,10 +215,10 @@ void OpenGLWindow::paintGL()
         _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
         _pipeline.loadIdentity();
 
-        if(o &&
-                (o->orientation() == QOrientationReading::TopUp
-                 || o->orientation() == QOrientationReading::FaceUp
-                 || o->orientation() == QOrientationReading::FaceDown)
+        if(orientationReading &&
+                (orientationReading->orientation() == QOrientationReading::TopUp
+                 || orientationReading->orientation() == QOrientationReading::FaceUp
+                 || orientationReading->orientation() == QOrientationReading::FaceDown)
             )
             _pipeline.translate(0,0, -9.0);
         else
@@ -261,39 +262,37 @@ void OpenGLWindow::paintGL()
     str = QString("Bank:%1").arg(_bank,4, 'f', 1, '0');
     messageList << str;
 
-    QRotationReading *rotReading = _rotationSensor.reading();
-
-    if(rotReading)
+    if(QRotationReading *rotReading = _rotationSensor.reading())
     {
         messageList << QString("Rot:{%1, %2, %3}").arg(rotReading->x()).arg(rotReading->y()).arg(rotReading->z());
     }
 
-    QPressureReading *pressureReading = _pressureSensor.reading();
-
-    if(pressureReading)
+    if(QPressureReading *pressureReading = _pressureSensor.reading())
     {
         messageList << QString("Pressure:{%1}").arg(pressureReading->pressure());
         messageList << QString("Temp:{%1}").arg(pressureReading->temperature());
     }
 
-    QGyroscopeReading *gyroReading = _gyroSensor.reading();
-
-    if( gyroReading)
+    if( QGyroscopeReading *gyroReading = _gyroSensor.reading())
     {
         messageList << QString("Gyro:{%1, %2, %3}").arg(gyroReading->x()).arg(gyroReading->y()).arg(gyroReading->z());
     }
 
-    QCompassReading *compassReading = _compassSensor.reading();
-
-    if( compassReading)
+    if( QCompassReading *compassReading = _compassSensor.reading())
     {
-        messageList << QString("Compass_Azimuth:{%1}").arg(compassReading->azimuth());
-        messageList << QString("Compass_Calib:{%1}").arg(compassReading->calibrationLevel());
+        messageList << QString("Compass_Azimuth: {%1}").arg(compassReading->azimuth());
+        messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
 
-    QMagnetometerReading* magnoReading = _magnoSensor.reading();
+    if(QAccelerometerReading* accelerometerReading = _accelerometer.reading())
+    {
+        messageList << QString("Accel:{%1, %2, %3}")
+                           .arg(accelerometerReading->x())
+                           .arg(accelerometerReading->y())
+                           .arg(accelerometerReading->z());
+    }
 
-    if( magnoReading)
+    if( QMagnetometerReading* magnoReading = _magnoSensor.reading())
     {
         messageList << QString("Mag:{%1, %2, %3}").arg(magnoReading->x()).arg(magnoReading->y()).arg(magnoReading->z());
         messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
