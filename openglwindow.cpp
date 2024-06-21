@@ -20,6 +20,41 @@
 
 #include <jibbs/android/assetpack.h>
 
+namespace {
+
+int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading* accSensor)
+{
+
+    const QVector3D acceleration{ static_cast<float>(accSensor->x()),
+                                 static_cast<float>(accSensor->y()),
+                                 static_cast<float>(accSensor->z())};
+
+    QVector3D normAccel = acceleration.normalized();
+
+    // Compute pitch and roll
+    float pitch = qAsin(-normAccel.y());
+    float roll = qAsin(normAccel.x() / qCos(pitch));
+
+    // Adjust magnetometer data for tilt
+    float magX = magneticField->x() * qCos(pitch) + magneticField->z() * qSin(pitch);
+    float magY = magneticField->x() * qSin(roll) * qSin(pitch) + magneticField->y() * qCos(roll) - magneticField->z() * qSin(roll) * qCos(pitch);
+
+    // Calculate heading
+    float heading = qAtan2(-magY, magX);
+
+    // Convert from radians to degrees
+    heading = qRadiansToDegrees(heading);
+
+    // Ensure the heading is between 0 and 360 degrees
+    if (heading < 0) {
+        heading += 360.0;
+    }
+
+    return static_cast<int>(heading);
+}
+
+}
+
 camera cam(vector3d(-3,10,25));
 
 OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
@@ -284,7 +319,9 @@ void OpenGLWindow::paintGL()
         messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
 
-    if(QAccelerometerReading* accelerometerReading = _accelerometer.reading())
+    QAccelerometerReading* accelerometerReading = _accelerometer.reading();
+
+    if(accelerometerReading)
     {
         messageList << QString("Accel:{%1, %2, %3}")
                            .arg(accelerometerReading->x())
@@ -292,10 +329,16 @@ void OpenGLWindow::paintGL()
                            .arg(accelerometerReading->z());
     }
 
-    if( QMagnetometerReading* magnoReading = _magnoSensor.reading())
+    QMagnetometerReading* magnoReading = _magnoSensor.reading();
+    if(magnoReading )
     {
         messageList << QString("Mag:{%1, %2, %3}").arg(magnoReading->x()).arg(magnoReading->y()).arg(magnoReading->z());
         messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
+    }
+
+    if( accelerometerReading && magnoReading)
+    {
+        messageList << QString("DerivedCompass{%1}").arg(calculateHeading(magnoReading, accelerometerReading));
     }
 
     qint64 currentTime = _elapsedTimer.elapsed();
