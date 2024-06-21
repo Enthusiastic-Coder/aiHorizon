@@ -323,7 +323,7 @@ void OpenGLWindow::paintGL()
 
         _hdg = alpha *  compass + (1.0f - alpha) * _hdg;
 
-        messageList << QString("Compass_Smoothed: {%1}").arg(_hdg< 0? _hdg+360 : _hdg);
+        messageList << QString("Compass_Smoothed: {%1}").arg(static_cast<int>(_hdg< 0? _hdg+360 : _hdg));
 
         messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
