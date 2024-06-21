@@ -299,7 +299,10 @@ void OpenGLWindow::paintGL()
 
     if(QRotationReading *rotReading = _rotationSensor.reading())
     {
-        messageList << QString("Rot:{%1, %2, %3}").arg(rotReading->x()).arg(rotReading->y()).arg(rotReading->z());
+        messageList << QString("Rot:{%1, %2, %3}")
+                           .arg(static_cast<int>(rotReading->x()))
+                           .arg(static_cast<int>(rotReading->y()))
+                           .arg(static_cast<int>(rotReading->z()));
     }
 
     if(QPressureReading *pressureReading = _pressureSensor.reading())
@@ -310,7 +313,10 @@ void OpenGLWindow::paintGL()
 
     if( QGyroscopeReading *gyroReading = _gyroSensor.reading())
     {
-        messageList << QString("Gyro:{%1, %2, %3}").arg(gyroReading->x()).arg(gyroReading->y()).arg(gyroReading->z());
+        messageList << QString("Gyro:{%1, %2, %3}")
+                           .arg(static_cast<int>(gyroReading->x()))
+                           .arg(static_cast<int>(gyroReading->y()))
+                           .arg(static_cast<int>(gyroReading->z()));
     }
 
     if( QCompassReading *compassReading = _compassSensor.reading())
@@ -328,12 +334,27 @@ void OpenGLWindow::paintGL()
         messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
 
-    auto displayNormalizedVector = [&messageList](QString message, QVector3D v, int factor){
+    auto displayNormalizedVector = [&messageList](QString message, QVector3D v, bool percent){
 
         v.normalize();
-        v *= factor;
 
-        messageList << QString("{%1}:{%2, %3, %4}").arg(message).arg(v.x()).arg(v.y()).arg(v.z());
+        if(percent)
+        {
+            v *= 100;
+            messageList << QString("{%1}:{%2, %3, %4}")
+                               .arg(message)
+                               .arg(static_cast<int>(v.x()))
+                               .arg(static_cast<int>(v.y()))
+                               .arg(static_cast<int>(v.z()));
+        }
+        else
+        {
+            messageList << QString("{%1}:{%2, %3, %4}")
+                               .arg(message)
+                               .arg(v.x())
+                               .arg(v.y())
+                               .arg(v.z());
+        }
 
     };
 
@@ -345,7 +366,7 @@ void OpenGLWindow::paintGL()
                                static_cast<float>(accelerometerReading->y()),
                                static_cast<float>(accelerometerReading->z())};
 
-        displayNormalizedVector("Accel:", v, 100);
+        displayNormalizedVector("Accel:", v, true);
     }
 
     QMagnetometerReading* magnoReading = _magnoSensor.reading();
@@ -355,7 +376,7 @@ void OpenGLWindow::paintGL()
                                static_cast<float>(magnoReading->y()),
                                static_cast<float>(magnoReading->z())};
 
-        displayNormalizedVector("Mag:", v, 100);
+        displayNormalizedVector("Mag:", v, true);
         messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
     }
 
