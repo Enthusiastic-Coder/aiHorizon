@@ -315,7 +315,11 @@ void OpenGLWindow::paintGL()
 
     if( QCompassReading *compassReading = _compassSensor.reading())
     {
-        messageList << QString("Compass_Azimuth: {%1}").arg(compassReading->azimuth());
+        int compass = static_cast<int>(compassReading->azimuth());
+        if( compass < 0)
+            compass += 360;
+
+        messageList << QString("Compass_Azimuth: {%1}").arg(compass);
         messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
 
