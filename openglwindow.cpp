@@ -315,11 +315,16 @@ void OpenGLWindow::paintGL()
 
     if( QCompassReading *compassReading = _compassSensor.reading())
     {
-        int compass = static_cast<int>(compassReading->azimuth());
-        if( compass < 0)
-            compass += 360;
+        const int compass = static_cast<int>(compassReading->azimuth());
 
-        messageList << QString("Compass_Azimuth: {%1}").arg(compass);
+        messageList << QString("Compass_Azimuth: {%1}").arg(compass < 0? compass+360:compass);
+
+        const float alpha = 0.1f;
+
+        _hdg = alpha *  compass + (1.0f - alpha) * _hdg;
+
+        messageList << QString("Compass_Smoothed: {%1}").arg(_hdg< 0? _hdg+360 : _hdg);
+
         messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
 
