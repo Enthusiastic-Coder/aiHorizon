@@ -319,20 +319,34 @@ void OpenGLWindow::paintGL()
         messageList << QString("Compass_Calib: {%1}").arg(compassReading->calibrationLevel());
     }
 
+    auto displayNormalizedVector = [&messageList](QString message, QVector3D v, int factor){
+
+        v.normalize();
+        v *= factor;
+
+        messageList << QString("{%1}:{%2, %3, %4}").arg(message).arg(v.x()).arg(v.y()).arg(v.z());
+
+    };
+
     QAccelerometerReading* accelerometerReading = _accelerometer.reading();
 
     if(accelerometerReading)
     {
-        messageList << QString("Accel:{%1, %2, %3}")
-                           .arg(accelerometerReading->x())
-                           .arg(accelerometerReading->y())
-                           .arg(accelerometerReading->z());
+        QVector3D v{static_cast<float>(accelerometerReading->x()),
+                               static_cast<float>(accelerometerReading->y()),
+                               static_cast<float>(accelerometerReading->z())};
+
+        displayNormalizedVector("Accel:", v, 100);
     }
 
     QMagnetometerReading* magnoReading = _magnoSensor.reading();
     if(magnoReading )
     {
-        messageList << QString("Mag:{%1, %2, %3}").arg(magnoReading->x()).arg(magnoReading->y()).arg(magnoReading->z());
+        QVector3D v{static_cast<float>(magnoReading->x()),
+                               static_cast<float>(magnoReading->y()),
+                               static_cast<float>(magnoReading->z())};
+
+        displayNormalizedVector("Mag:", v, 100);
         messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
     }
 
