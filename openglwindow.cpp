@@ -170,7 +170,9 @@ void OpenGLWindow::initializeGL()
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0,0,1,1);
-    connect(&_timer, SIGNAL(timeout()), this, SLOT(update()));
+
+    connect(&_timer, &QTimer::timeout, this, qOverload<>(&QOpenGLWidget::update));
+
     _timer.start(100);
     _accelerometer.setActive(true);
     _orientation.setActive(true);
