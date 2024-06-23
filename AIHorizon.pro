@@ -16,7 +16,7 @@ CONFIG   += console
 
 TEMPLATE = app
 
-CONFIG += c++11
+CONFIG += c++17
 
 INCLUDEPATH += sdk/include
 INCLUDEPATH += glm
