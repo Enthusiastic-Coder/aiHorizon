@@ -14,12 +14,13 @@
 #include "openglcontextTest.h"
 #include <QDir>
 #include <QResource>
+#include <QQuaternion>
 
 #include <jibbs/android/assetpack.h>
 
 namespace {
 
-int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading* accSensor)
+int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading* accSensor, QStringList& messageList)
 {
 
     const QVector3D acceleration{ static_cast<float>(accSensor->x()),
@@ -32,12 +33,26 @@ int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading*
     float pitch = qAsin(-normAccel.y());
     float roll = qAsin(normAccel.x() / qCos(pitch));
 
-    // Adjust magnetometer data for tilt
-    float magX = magneticField->x() * qCos(pitch) + magneticField->z() * qSin(pitch);
-    float magY = magneticField->x() * qSin(roll) * qSin(pitch) + magneticField->y() * qCos(roll) - magneticField->z() * qSin(roll) * qCos(pitch);
+    messageList << QString("derived PitchRoll {%1/%2}")
+                       .arg(static_cast<int>(qRadiansToDegrees(pitch)))
+                       .arg(static_cast<int>(qRadiansToDegrees(roll)));
+
+
+    QQuaternion q = QQuaternion::fromEulerAngles(pitch, 0, roll).inverted();
+
+    const QVector3D magnet{ static_cast<float>(magneticField->x()),
+                                 static_cast<float>(magneticField->y()),
+                                 static_cast<float>(magneticField->z())};
+
+
+    const QVector3D flatMagnet = q.rotatedVector(magnet);
+
+
+    messageList << QString("localMag (%1,%2,%3)").arg(magnet.x()).arg(magnet.y()).arg(magnet.z());
+    messageList << QString("worldMag (%1,%2,%3)").arg(flatMagnet.x()).arg(flatMagnet.y()).arg(flatMagnet.z());
 
     // Calculate heading
-    float heading = qAtan2(-magY, magX);
+    float heading = qAtan2(flatMagnet.x(), flatMagnet.y());
 
     // Convert from radians to degrees
     heading = qRadiansToDegrees(heading);
@@ -379,7 +394,7 @@ void OpenGLWindow::paintGL()
 
     if( accelerometerReading && magnoReading)
     {
-        messageList << QString("DerivedCompass{%1}").arg(calculateHeading(magnoReading, accelerometerReading));
+        messageList << QString("DerivedCompass{%1}").arg(calculateHeading(magnoReading, accelerometerReading, messageList));
     }
 
     qint64 currentTime = _elapsedTimer.elapsed();
