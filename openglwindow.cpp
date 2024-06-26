@@ -16,6 +16,8 @@
 #include <QResource>
 #include <QQuaternion>
 
+#include "CustomRotationFilter.h"
+
 #include <jibbs/android/assetpack.h>
 
 namespace {
@@ -174,6 +176,10 @@ void OpenGLWindow::initializeGL()
     connect(&_timer, &QTimer::timeout, this, qOverload<>(&QOpenGLWidget::update));
 
     _timer.start(100);
+
+    _rotationFilter = new CustomRotationFilter;
+    _rotationSensor.addFilter(_rotationFilter);
+
     _accelerometer.setActive(true);
     _orientation.setActive(true);
     _rotationSensor.setActive(true);
@@ -403,6 +409,8 @@ void OpenGLWindow::paintGL()
     double dt = (currentTime - _lastTime)/1000.0; // elapsed time in milliseconds
 
     messageList << QString("Dt:{%1}").arg(dt);
+
+    messageList << QString("FilterHdg:{%1}").arg(_rotationFilter->heading());
 
      _lastTime = currentTime;
 

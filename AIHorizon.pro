@@ -47,3 +47,9 @@ DISTFILES += $$files("shaders/*", true) $$files("android/*", true)
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
+HEADERS += \
+    CustomRotationFilter.h
+
+SOURCES += \
+    CustomRotationFilter.cpp
+

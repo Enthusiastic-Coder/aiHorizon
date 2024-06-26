@@ -28,6 +28,7 @@
 
 class shader;
 class meshLoader;
+class CustomRotationFilter;
 
 #include <QOpenGLFunctions>
 
@@ -70,6 +71,8 @@ private:
     QGyroscope _gyroSensor;
     QCompass _compassSensor;
     QMagnetometer _magnoSensor;
+
+    CustomRotationFilter* _rotationFilter = nullptr;
 
     QElapsedTimer _elapsedTimer;
     qint64 _lastTime = {};
