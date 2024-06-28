@@ -192,6 +192,10 @@ void OpenGLWindow::paintGL()
     // if(!isExposed())
     //     return;
 
+    const qint64 currentTime = _elapsedTimer.elapsed();
+    const double dt = (currentTime - _lastTime)/1000.0; // elapsed time in milliseconds
+
+
     QOrientationReading* orientationReading = _orientation.reading();
     if( orientationReading )
     {
@@ -385,9 +389,6 @@ void OpenGLWindow::paintGL()
     {
         messageList << QString("DerivedCompass{%1}").arg(calculateHeading(magnoReading, accelerometerReading, messageList));
     }
-
-    qint64 currentTime = _elapsedTimer.elapsed();
-    double dt = (currentTime - _lastTime)/1000.0; // elapsed time in milliseconds
 
     messageList << QString("Dt:{%1}").arg(dt);
 
