@@ -73,9 +73,6 @@ camera cam(vector3d(-3,10,25));
 
 OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
 {
-    _bankHistory.resize(5);
-    _pitchHistory.resize(_bankHistory.size());
-
     std::vector<QString> files = {
                                   "main",
                                   "patch",
@@ -226,24 +223,8 @@ void OpenGLWindow::paintGL()
         }
     }
 
-    if( _bankHistoryIdx == _bankHistory.size())
-        _bankHistoryIdx = 0;
 
-    _pitchHistory[_bankHistoryIdx] = _pitch;
-    _bankHistory[_bankHistoryIdx++] = _bank;
 
-    _bank = 0.0f;
-
-    for(auto value:_bankHistory)
-        _bank += value;
-
-    _bank /= _bankHistory.size();
-
-    _pitch = 0.0f;
-    for(auto value:_pitchHistory)
-        _pitch += value;
-
-    _pitch /= _pitchHistory.size();
 
     const auto& meshes = _scene->getMeshes();
 
