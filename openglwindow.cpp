@@ -312,7 +312,7 @@ void OpenGLWindow::paintGL()
 
     if(QPressureReading *pressureReading = _pressureSensor.reading())
     {
-        messageList << QString("Pressure:{%1}").arg(pressureReading->pressure());
+        messageList << QString("Pressure:{%1}").arg(static_cast<int>(pressureReading->pressure()/100));
         messageList << QString("Temp:{%1}").arg(pressureReading->temperature());
     }
 
