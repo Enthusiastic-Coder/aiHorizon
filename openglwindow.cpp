@@ -224,13 +224,15 @@ void OpenGLWindow::paintGL()
                 z = accReading->z();
             }
 
-            _bank = atan2(x,y) / 3.1415 * 180;
-            _pitch = atan2(z,y) / 3.1415 * 180;
+            // _bank = atan2(x,y) / 3.1415 * 180;
+            // _pitch = atan2(z,y) / 3.1415 * 180;
+
+            const float factor = 2.0f*dt;
+
+            _bank = qRadiansToDegrees( qAtan2(x, qSqrt(y*y+z*z))) * factor + (1-factor) * _bank;
+            _pitch = qRadiansToDegrees( qAtan2(z, qSqrt(y*y+ x*x ))) * factor + (1-factor) * _pitch;
         }
     }
-
-
-
 
     const auto& meshes = _scene->getMeshes();
 
