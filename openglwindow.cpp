@@ -356,7 +356,7 @@ void OpenGLWindow::paintGL()
             // Calculate yaw
             float yaw = qRadiansToDegrees( qAtan2(magFieldTransformed.y(), magFieldTransformed.x()));
 
-            messageList << QString("YawFromRot {%1}").arg((int)yaw);
+            //messageList << QString("YawFromRot {%1}").arg((int)yaw);
         }
     }
 
