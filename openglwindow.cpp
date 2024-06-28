@@ -203,6 +203,7 @@ void OpenGLWindow::paintGL()
         {
             qreal x, y, z;
 
+#ifdef __IGNORE__
             if( orientationReading->orientation() == QOrientationReading::RightUp )
             {
                 y = accReading->x();
@@ -216,6 +217,7 @@ void OpenGLWindow::paintGL()
                 z = accReading->z();
             }
             else
+#endif
             {
                 x = accReading->x();
                 y = accReading->y();
@@ -255,14 +257,20 @@ void OpenGLWindow::paintGL()
         _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
         _pipeline.loadIdentity();
 
-        if(orientationReading &&
-                (orientationReading->orientation() == QOrientationReading::TopUp
-                 || orientationReading->orientation() == QOrientationReading::FaceUp
-                 || orientationReading->orientation() == QOrientationReading::FaceDown)
-            )
-            _pipeline.translate(0,0, -9.0);
-        else
-            _pipeline.translate(0,0, -5.5);
+        // if(orientationReading &&
+        //         (orientationReading->orientation() == QOrientationReading::TopUp
+        //          || orientationReading->orientation() == QOrientationReading::FaceUp
+        //          || orientationReading->orientation() == QOrientationReading::FaceDown)
+        //     )
+        //     _pipeline.translate(0,0, -9.0);
+        // else
+        //     _pipeline.translate(0,0, -5.5);
+
+#ifdef Q_OS_ANDROID
+        _pipeline.translate(0,0, -9.0);
+#else
+        _pipeline.translate(0,0, -5.5);
+#endif
 
         if( mesh->name() == "secondary_ai_color_Disk")
         {
