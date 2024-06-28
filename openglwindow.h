@@ -70,7 +70,7 @@ private:
     QPressureSensor _pressureSensor;
     QGyroscope _gyroSensor;
     QCompass _compassSensor;
-    QMagnetometer _magnoSensor;
+    QMagnetometer _magSensor;
 
     CustomRotationFilter* _rotationFilter = nullptr;
 

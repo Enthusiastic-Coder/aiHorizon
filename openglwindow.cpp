@@ -18,55 +18,6 @@
 
 #include <jibbs/android/assetpack.h>
 
-namespace {
-
-int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading* accSensor, QStringList& messageList)
-{
-
-    const QVector3D acceleration{ static_cast<float>(accSensor->x()),
-                                 static_cast<float>(accSensor->y()),
-                                 static_cast<float>(accSensor->z())};
-
-    QVector3D normAccel = acceleration.normalized();
-
-    // Compute pitch and roll
-    float pitch = qAsin(-normAccel.y());
-    float roll = qAsin(normAccel.x() / qCos(pitch));
-
-    // messageList << QString("derived PitchRoll {%1/%2}")
-    //                    .arg(static_cast<int>(qRadiansToDegrees(pitch)))
-    //                    .arg(static_cast<int>(qRadiansToDegrees(roll)));
-
-
-    QQuaternion q = QQuaternion::fromEulerAngles(pitch, 0, roll).inverted();
-
-    const QVector3D magnet{ static_cast<float>(magneticField->x()),
-                                 static_cast<float>(magneticField->y()),
-                                 static_cast<float>(magneticField->z())};
-
-
-    const QVector3D flatMagnet = q.rotatedVector(magnet);
-
-
-//    messageList << QString("localMag (%1,%2,%3)").arg(magnet.x()).arg(magnet.y()).arg(magnet.z());
-//    messageList << QString("worldMag (%1,%2,%3)").arg(flatMagnet.x()).arg(flatMagnet.y()).arg(flatMagnet.z());
-
-    // Calculate heading
-    float heading = qAtan2(magneticField->x(), magneticField->z());
-
-    // Convert from radians to degrees
-    heading = qRadiansToDegrees(heading);
-
-    // Ensure the heading is between 0 and 360 degrees
-    if (heading < 0) {
-        heading += 360.0;
-    }
-
-    return static_cast<int>(heading);
-}
-
-}
-
 camera cam(vector3d(-3,10,25));
 
 OpenGLWindow::OpenGLWindow(QWidget *parent) :QOpenGLWidget{parent}
@@ -178,7 +129,7 @@ void OpenGLWindow::initializeGL()
     _pressureSensor.setActive(true);
     _gyroSensor.setActive(true);
     _compassSensor.setActive(true);
-    _magnoSensor.setActive(true);
+    _magSensor.setActive(true);
 
 }
 
@@ -218,9 +169,6 @@ void OpenGLWindow::paintGL()
                 y = accReading->y();
                 z = accReading->z();
             }
-
-            // _bank = atan2(x,y) / 3.1415 * 180;
-            // _pitch = atan2(z,y) / 3.1415 * 180;
 
             const float factor = 2.0f*dt;
 
@@ -370,31 +318,46 @@ void OpenGLWindow::paintGL()
 
     };
 
-    QAccelerometerReading* accelerometerReading = _accelerometer.reading();
+    QAccelerometerReading* accelReading = _accelerometer.reading();
 
-    if(accelerometerReading)
+    if(accelReading)
     {
-        QVector3D v{static_cast<float>(accelerometerReading->x()),
-                               static_cast<float>(accelerometerReading->y()),
-                               static_cast<float>(accelerometerReading->z())};
+        QVector3D v{static_cast<float>(accelReading->x()),
+                               static_cast<float>(accelReading->y()),
+                               static_cast<float>(accelReading->z())};
 
         displayNormalizedVector("Accel:", v, true);
     }
 
-    QMagnetometerReading* magnoReading = _magnoSensor.reading();
-    if(magnoReading )
+    QMagnetometerReading* magnReading = _magSensor.reading();
+    if(magnReading )
     {
-        QVector3D v{static_cast<float>(magnoReading->x()),
-                               static_cast<float>(magnoReading->y()),
-                               static_cast<float>(magnoReading->z())};
+        QVector3D v{static_cast<float>(magnReading->x()),
+                               static_cast<float>(magnReading->y()),
+                               static_cast<float>(magnReading->z())};
 
         displayNormalizedVector("Mag:", v, true);
-        messageList << QString("Mag_Calib:{%1}").arg(magnoReading->calibrationLevel());
+        messageList << QString("Mag_Calib:{%1}").arg(magnReading->calibrationLevel());
     }
 
-    if( accelerometerReading && magnoReading)
+    if(QRotationReading *rotReading = _rotationSensor.reading())
     {
-        messageList << QString("DerivedCompass{%1}").arg(calculateHeading(magnoReading, accelerometerReading, messageList));
+        if( accelReading && magnReading)
+        {
+            QQuaternion q = QQuaternion::fromEulerAngles(rotReading->x(), rotReading->z(), rotReading->x());
+            q.normalize();
+            q = q.inverted();
+
+            QVector3D magneticField{(float)magnReading->x(), (float)magnReading->y(), (float)magnReading->z()};
+
+            // Apply the rotation to the magnetic field
+            QVector3D magFieldTransformed = q.rotatedVector(magneticField);
+
+            // Calculate yaw
+            float yaw = qRadiansToDegrees( qAtan2(magFieldTransformed.y(), magFieldTransformed.x()));
+
+            messageList << QString("YawFromRot {%1}").arg((int)yaw);
+        }
     }
 
     //messageList << QString("FilterHdg:{%1}").arg(_rotationFilter->heading());
