@@ -16,8 +16,6 @@
 #include <QResource>
 #include <QQuaternion>
 
-#include "CustomRotationFilter.h"
-
 #include <jibbs/android/assetpack.h>
 
 namespace {
@@ -35,9 +33,9 @@ int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading*
     float pitch = qAsin(-normAccel.y());
     float roll = qAsin(normAccel.x() / qCos(pitch));
 
-    messageList << QString("derived PitchRoll {%1/%2}")
-                       .arg(static_cast<int>(qRadiansToDegrees(pitch)))
-                       .arg(static_cast<int>(qRadiansToDegrees(roll)));
+    // messageList << QString("derived PitchRoll {%1/%2}")
+    //                    .arg(static_cast<int>(qRadiansToDegrees(pitch)))
+    //                    .arg(static_cast<int>(qRadiansToDegrees(roll)));
 
 
     QQuaternion q = QQuaternion::fromEulerAngles(pitch, 0, roll).inverted();
@@ -50,11 +48,11 @@ int calculateHeading(QMagnetometerReading* magneticField, QAccelerometerReading*
     const QVector3D flatMagnet = q.rotatedVector(magnet);
 
 
-    messageList << QString("localMag (%1,%2,%3)").arg(magnet.x()).arg(magnet.y()).arg(magnet.z());
-    messageList << QString("worldMag (%1,%2,%3)").arg(flatMagnet.x()).arg(flatMagnet.y()).arg(flatMagnet.z());
+//    messageList << QString("localMag (%1,%2,%3)").arg(magnet.x()).arg(magnet.y()).arg(magnet.z());
+//    messageList << QString("worldMag (%1,%2,%3)").arg(flatMagnet.x()).arg(flatMagnet.y()).arg(flatMagnet.z());
 
     // Calculate heading
-    float heading = qAtan2(flatMagnet.x(), flatMagnet.y());
+    float heading = qAtan2(magneticField->x(), magneticField->z());
 
     // Convert from radians to degrees
     heading = qRadiansToDegrees(heading);
@@ -173,9 +171,6 @@ void OpenGLWindow::initializeGL()
     connect(&_timer, &QTimer::timeout, this, qOverload<>(&QOpenGLWidget::update));
 
     _timer.start(100);
-
-    _rotationFilter = new CustomRotationFilter;
-    _rotationSensor.addFilter(_rotationFilter);
 
     _accelerometer.setActive(true);
     _orientation.setActive(true);
@@ -306,6 +301,8 @@ void OpenGLWindow::paintGL()
     int count = 1;
     QStringList messageList;
 
+    messageList << QString("Dt:{%1}").arg(dt);
+
     QString str = QString("Pitch:%1").arg(_pitch,4, 'f', 1, '0');
     messageList << str;
 
@@ -400,9 +397,7 @@ void OpenGLWindow::paintGL()
         messageList << QString("DerivedCompass{%1}").arg(calculateHeading(magnoReading, accelerometerReading, messageList));
     }
 
-    messageList << QString("Dt:{%1}").arg(dt);
-
-    messageList << QString("FilterHdg:{%1}").arg(_rotationFilter->heading());
+    //messageList << QString("FilterHdg:{%1}").arg(_rotationFilter->heading());
 
      _lastTime = currentTime;
 

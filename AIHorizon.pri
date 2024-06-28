@@ -26,9 +26,3 @@ HEADERS += \
 SOURCES += \
     QTopWindow.cpp
 
-HEADERS += \
-    CustomRotationFilter.h
-
-SOURCES += \
-    CustomRotationFilter.cpp
-
