@@ -224,8 +224,8 @@ void OpenGLWindow::paintGL()
 
             const float factor = 2.0f*dt;
 
-            _bank = qRadiansToDegrees( qAtan2(x, qSqrt(y*y+z*z))) * factor + (1-factor) * _bank;
             _pitch = qRadiansToDegrees( qAtan2(z, qSqrt(y*y+ x*x ))) * factor + (1-factor) * _pitch;
+            _roll = qRadiansToDegrees( qAtan2(x, qSqrt(y*y+z*z))) * factor + (1-factor) * _roll;
         }
     }
 
@@ -271,7 +271,7 @@ void OpenGLWindow::paintGL()
 
         if( mesh->name() == "secondary_ai_color_Disk")
         {
-            _pipeline.rotateZ(-int(_bank));
+            _pipeline.rotateZ(-int(_roll));
 #ifdef ANDROID
             _pipeline.translate(0, (_pitch-20)/20,0);;
 #else
@@ -281,7 +281,7 @@ void OpenGLWindow::paintGL()
 
         if( mesh->name() == "secondary_ai_color_Housing__Orange")
         {
-            _pipeline.rotateZ(-int(_bank));
+            _pipeline.rotateZ(-int(_roll));
         }
 
         _pipeline.updateMatrices(_shaderProgram.getProgramID());
@@ -306,7 +306,7 @@ void OpenGLWindow::paintGL()
     QString str = QString("Pitch:%1").arg(_pitch,4, 'f', 1, '0');
     messageList << str;
 
-    str = QString("Bank:%1").arg(_bank,4, 'f', 1, '0');
+    str = QString("Bank:%1").arg(_roll,4, 'f', 1, '0');
     messageList << str;
 
     if(QRotationReading *rotReading = _rotationSensor.reading())
@@ -427,10 +427,10 @@ void OpenGLWindow::keyPressEvent(QKeyEvent *e)
         close();
 
     if( e->key() == Qt::Key_Left)
-        _bank+=5;
+        _roll+=5;
 
     if( e->key() == Qt::Key_Right)
-        _bank-=5;
+        _roll-=5;
 
     if( e->key() == Qt::Key_Up)
         _pitch +=5;

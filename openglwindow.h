@@ -81,7 +81,7 @@ private:
     std::unordered_map<QString, QByteArray> _obbByteArrays;
 
     float _hdg = {};
-    float _bank=5.56f;
+    float _roll=5.56f;
     float _pitch=-12.56f;
     int _bankHistoryIdx = 0;
 
