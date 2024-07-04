@@ -344,9 +344,8 @@ void OpenGLWindow::paintGL()
     {
         if( accelReading && magnReading)
         {
-            QQuaternion q = QQuaternion::fromEulerAngles(rotReading->x(), rotReading->z(), rotReading->x());
+            QQuaternion q = QQuaternion::fromEulerAngles(rotReading->x(), rotReading->y(), 0);
             q.normalize();
-            q = q.inverted();
 
             QVector3D magneticField{(float)magnReading->x(), (float)magnReading->y(), (float)magnReading->z()};
 
@@ -354,7 +353,7 @@ void OpenGLWindow::paintGL()
             QVector3D magFieldTransformed = q.rotatedVector(magneticField);
 
             // Calculate yaw
-            int yaw = qRadiansToDegrees( qAtan2(magneticField.x(), magneticField.y()));
+            int yaw = qRadiansToDegrees( qAtan2(magFieldTransformed.x(), magFieldTransformed.y()));
             if(yaw < 0)
                 yaw+=360;
 
