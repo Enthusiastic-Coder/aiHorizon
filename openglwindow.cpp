@@ -345,6 +345,7 @@ void OpenGLWindow::paintGL()
         if( accelReading && magnReading)
         {
             QQuaternion q = QQuaternion::fromEulerAngles(rotReading->x(), rotReading->y(), 0);
+            q = q.inverted();
             q.normalize();
 
             QVector3D magneticField{(float)magnReading->x(), (float)magnReading->y(), (float)magnReading->z()};
