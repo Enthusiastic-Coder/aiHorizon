@@ -359,8 +359,9 @@ void OpenGLWindow::paintGL()
                 yaw += 360;
 
             messageList << QString("YawFromRot {%1}").arg(yaw);
-            messageList << QString("Cur:[%1,%2,%3]").arg(magneticField.x()).arg(magneticField.y()).arg(magneticField.z());
-            messageList << QString("Euler:[%1,%2,%3]").arg(magFieldTransformed.x()).arg(magFieldTransformed.y()).arg(magFieldTransformed.z());
+
+            displayNormalizedVector("Local:", magneticField, true);
+            displayNormalizedVector("World:", magFieldTransformed, true);
         }
     }
 
