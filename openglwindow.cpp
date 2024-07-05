@@ -296,6 +296,7 @@ void OpenGLWindow::paintGL()
 
     auto displayNormalizedVector = [&messageList](QString message, QVector3D v, bool percent){
 
+        v *= 10000;
         v.normalize();
 
         if(percent)
