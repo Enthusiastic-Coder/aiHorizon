@@ -349,7 +349,7 @@ void OpenGLWindow::paintGL()
 
             magneticField *= 1e5;
 
-            QQuaternion q = QQuaternion::fromEulerAngles(-rotReading->x(), rotReading->y(), 0);
+            QQuaternion q = QQuaternion::fromEulerAngles(rotReading->x(), rotReading->y(), 0);
 
             // Apply the rotation to the magnetic field
             QVector3D magFieldTransformed = q.rotatedVector(magneticField);
