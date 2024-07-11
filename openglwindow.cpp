@@ -360,7 +360,7 @@ void OpenGLWindow::paintGL()
             QVector3D magFieldTransformed = q.rotatedVector(magneticField);
 
             // Calculate yaw
-            int yaw = qRadiansToDegrees( qAtan2(magFieldTransformed.x(), magFieldTransformed.y()));
+            int yaw = qRadiansToDegrees( qAtan2(-magFieldTransformed.x(), magFieldTransformed.y()));
 
             if( yaw < 0)
                 yaw += 360;
