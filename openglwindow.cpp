@@ -347,9 +347,9 @@ void OpenGLWindow::paintGL()
         {
             const float factor = 1e5;
 
-            QVector3D magneticField{static_cast<float>(magnReading->x()*1e5),
-                                    static_cast<float>(magnReading->y() * 1e5),
-                                    static_cast<float>(magnReading->z() * 1e5)};
+            QVector3D magneticField{static_cast<float>(magnReading->x()* factor),
+                                    static_cast<float>(magnReading->y() * factor),
+                                    static_cast<float>(magnReading->z() * factor)};
 
             QQuaternion qRoll = QQuaternion::fromEulerAngles(0, rotReading->y(), 0);
             QQuaternion qPitch = QQuaternion::fromEulerAngles(rotReading->x(), 0, 0);
