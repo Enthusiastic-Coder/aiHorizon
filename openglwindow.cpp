@@ -197,11 +197,18 @@ void OpenGLWindow::paintGL()
     glUniform3f(glGetUniformLocation(_shaderProgram.getProgramID(), "cameraPosition"),
                 cam.getLocation().x,cam.getLocation().y,cam.getLocation().z);
 
+    _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
+    _pipeline.loadIdentity();
+
+#ifdef Q_OS_ANDROID
+    _pipeline.translate(0,0, -9.0);
+#else
+    _pipeline.translate(0,0, -5.5);
+#endif
+    _pipeline.updateMatrices(_shaderProgram.getProgramID());
+
     for( const auto& mesh: meshes)
     {
-        _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
-        _pipeline.loadIdentity();
-
         // if(orientationReading &&
         //         (orientationReading->orientation() == QOrientationReading::TopUp
         //          || orientationReading->orientation() == QOrientationReading::FaceUp
@@ -211,14 +218,15 @@ void OpenGLWindow::paintGL()
         // else
         //     _pipeline.translate(0,0, -5.5);
 
-#ifdef Q_OS_ANDROID
-        _pipeline.translate(0,0, -9.0);
-#else
-        _pipeline.translate(0,0, -5.5);
-#endif
+
+        bool transformationChanged(false);
 
         if( mesh->name() == "secondary_ai_color_Disk")
         {
+            transformationChanged = true;
+
+            _pipeline.pushMatrix();
+
             _pipeline.rotateZ(-int(_roll));
 #ifdef ANDROID
             _pipeline.translate(0, (_pitch-20)/20,0);;
@@ -229,12 +237,23 @@ void OpenGLWindow::paintGL()
 
         if( mesh->name() == "secondary_ai_color_Housing__Orange")
         {
+            transformationChanged = true;
+            _pipeline.pushMatrix();
             _pipeline.rotateZ(-int(_roll));
         }
 
-        _pipeline.updateMatrices(_shaderProgram.getProgramID());
+        if(transformationChanged)
+        {
+            _pipeline.updateMatrices(_shaderProgram.getProgramID());
+        }
 
         mesh.draw(_shaderProgram);
+
+        if(transformationChanged)
+        {
+            _pipeline.popMatrix();
+            _pipeline.updateMatrices(_shaderProgram.getProgramID());
+        }
     }
 
     _shaderProgram.useDefault();
