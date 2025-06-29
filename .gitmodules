@@ -1,9 +1,9 @@
 [submodule "sdk"]
 	path = sdk
-	url = git@bitbucket.org:MOJ_JEB/sdk.git
+url=https://github.com/Enthusiastic-Coder/sdk.git
 [submodule "glm"]
 	path = glm
 	url = https://github.com/g-truc/glm.git
 [submodule "assimp2"]
 	path = assimp2
-	url = git@bitbucket.org:MOJ_JEB/assimp2.git
+url=https://github.com/Enthusiastic-Coder/assimp2.git
