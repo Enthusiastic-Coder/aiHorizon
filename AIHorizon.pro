@@ -43,7 +43,14 @@ INSTALLS += shaders
 RESOURCES += \
     extra.qrc
 
-DISTFILES += $$files("shaders/*", true) $$files("android/*", true)
+DISTFILES += $$files("shaders/*", true) $$files("android/*", true) \
+    android/res/xml/qtprovider_paths.xml
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
+
+android {
+    QMAKE_LFLAGS += -Wl,-z,max-page-size=16384
+    QMAKE_LFLAGS_RELEASE += -Wl,-z,max-page-size=16384
+    message("16 KB ELF page size enabled")
+}
