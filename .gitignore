@@ -5,3 +5,4 @@ android/main/src/main/assets/main.obb
 android/patch/src/main/assets/patch.obb
 android/extra/src/main/assets/extra.obb
 scripts/__obbs/
+build/
