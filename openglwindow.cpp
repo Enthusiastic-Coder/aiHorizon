@@ -183,6 +183,9 @@ void OpenGLWindow::paintGL()
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
+    glClear(GL_COLOR_BUFFER_BIT);
+
+
     _shaderProgram.use();
 
     _pipeline.matrixMode(matrixModes::MODEL_MATRIX);
